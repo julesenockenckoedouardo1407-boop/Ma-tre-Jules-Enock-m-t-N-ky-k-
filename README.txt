@@ -36,3 +36,6 @@ Pour un dépôt de projet GitHub Pages, ils seront normalement sous :
 Après une première ouverture en ligne, le Service Worker met en cache les ressources nécessaires pour le fonctionnement hors connexion.
 
 Cette V1 n'utilise aucun service d'IA.
+
+
+V3 EXPERT : modules avancés sans IA — partages, prix de revient, jours de travail, remises, problèmes composés, conversions et entraînement aléatoire.

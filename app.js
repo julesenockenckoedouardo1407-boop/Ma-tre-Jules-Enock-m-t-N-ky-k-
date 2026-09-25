@@ -289,3 +289,36 @@ if($('#solveProblem')){
   $('#clearProblem').onclick=()=>{ $('#problemText').value=''; $('#problemResult').className='result'; $('#problemResult').innerHTML='La résolution détaillée apparaîtra ici.'; };
   $$('.exampleProblem').forEach(b=>b.onclick=()=>{ $('#problemText').value=b.textContent; show('#problem'); $('#solveProblem').click(); });
 }
+
+
+/* ===================== V3 EXPERT — MODULES AVANCÉS SANS IA ===================== */
+const $id=(x)=>document.getElementById(x);
+const advFields=$id('advFields');
+function advForm(){
+ const t=$id('advType')?.value; if(!advFields)return;
+ const map={
+ shareEqual:`<label>Quantité totale<input id="av1" inputmode="decimal"></label><label>Nombre de personnes<input id="av2" inputmode="numeric"></label>`,
+ shareRatio:`<label>Quantité totale<input id="av1" inputmode="decimal"></label><label>Parts (ex. 2,3,5)<input id="av2"></label>`,
+ cost:`<label>Prix d'achat<input id="av1" inputmode="decimal"></label><label>Frais supplémentaires<input id="av2" inputmode="decimal"></label><label>Nombre d'articles<input id="av3" inputmode="numeric" value="1"></label>`,
+ workdays:`<label>Nombre total de jours<input id="av1" inputmode="numeric"></label><label>Jours non travaillés<input id="av2" inputmode="numeric"></label><label>Production par jour<input id="av3" inputmode="decimal"></label>`,
+ compound:`<label>Quantité initiale<input id="av1" inputmode="decimal"></label><label>Opération 1<select id="av2"><option value="add">Ajouter</option><option value="sub">Retirer</option><option value="mul">Multiplier par</option></select></label><label>Valeur 1<input id="av3" inputmode="decimal"></label><label>Opération 2<select id="av4"><option value="mul">Multiplier par</option><option value="add">Ajouter</option><option value="sub">Retirer</option></select></label><label>Valeur 2<input id="av5" inputmode="decimal"></label>`,
+ discount:`<label>Prix initial<input id="av1" inputmode="decimal"></label><label>Taux (%)<input id="av2" inputmode="decimal"></label><label>Type<select id="av3"><option value="discount">Remise</option><option value="increase">Augmentation</option></select></label>`};
+ advFields.innerHTML=map[t];
+}
+$id('advType')?.addEventListener('change',advForm); advForm();
+$id('advSolve')?.addEventListener('click',()=>{
+ const t=$id('advType').value,n=x=>Number(x), f=(title,steps)=>resultSteps(title,steps); let h='';
+ if(t==='shareEqual'){let q=n($id('av1').value),p=n($id('av2').value); if(q>=0&&p>0)h=f('Partage égal',[['Données',`Total = ${fmt(q)} ; personnes = ${fmt(p)}`],['Règle','Part = total ÷ nombre de personnes'],['Calcul',`${fmt(q)} ÷ ${fmt(p)} = <b>${fmt(q/p)}</b>`],['Réponse',`Chaque personne reçoit <b>${fmt(q/p)}</b>.`]]);}
+ if(t==='shareRatio'){let q=n($id('av1').value),parts=$id('av2').value.split(/[,; ]+/).map(Number).filter(x=>x>0),s=parts.reduce((a,b)=>a+b,0); if(q>=0&&parts.length&&s)h=f('Partage proportionnel',[['Données',`Total = ${fmt(q)} ; parts = ${parts.join(' : ')}`],['Total des parts',`${parts.join(' + ')} = <b>${fmt(s)}</b>`],['Valeur d’une part',`${fmt(q)} ÷ ${fmt(s)} = <b>${fmt(q/s)}</b>`],['Répartition',parts.map((p,i)=>`Part ${i+1} = ${p} × ${fmt(q/s)} = <b>${fmt(p*q/s)}</b>`).join('<br>')]]);}
+ if(t==='cost'){let a=n($id('av1').value),r=n($id('av2').value),q=n($id('av3').value);if(q>0)h=f('Prix de revient',[['Données',`Achat = ${fmt(a)} ; frais = ${fmt(r)} ; quantité = ${fmt(q)}`],['Coût total',`${fmt(a)} + ${fmt(r)} = <b>${fmt(a+r)}</b>`],['Prix de revient unitaire',`${fmt(a+r)} ÷ ${fmt(q)} = <b>${fmt((a+r)/q)}</b>`],['Réponse',`Prix de revient unitaire = <b>${fmt((a+r)/q)}</b>`]]);}
+ if(t==='workdays'){let total=n($id('av1').value),off=n($id('av2').value),prod=n($id('av3').value),days=total-off;if(days>=0)h=f('Jours de travail',[['Données',`Jours totaux = ${fmt(total)} ; jours non travaillés = ${fmt(off)}`],['Jours travaillés',`${fmt(total)} − ${fmt(off)} = <b>${fmt(days)}</b>`],['Production totale',`${fmt(days)} × ${fmt(prod)} = <b>${fmt(days*prod)}</b>`],['Réponse',`Jours travaillés = <b>${fmt(days)}</b> ; production = <b>${fmt(days*prod)}</b>`]]);}
+ if(t==='compound'){let v=n($id('av1').value),a=n($id('av3').value),b=n($id('av5').value),o1=$id('av2').value,o2=$id('av4').value;if([v,a,b].every(Number.isFinite)){let r1=o1==='add'?v+a:o1==='sub'?v-a:v*a;let r2=o2==='add'?r1+b:o2==='sub'?r1-b:r1*b;h=f('Problème composé',[['Valeur initiale',`<b>${fmt(v)}</b>`],['Étape 1',`${fmt(v)} ${o1==='add'?'+':o1==='sub'?'−':'×'} ${fmt(a)} = <b>${fmt(r1)}</b>`],['Étape 2',`${fmt(r1)} ${o2==='add'?'+':o2==='sub'?'−':'×'} ${fmt(b)} = <b>${fmt(r2)}</b>`],['Réponse',`Résultat final = <b>${fmt(r2)}</b>`]]);}}
+ if(t==='discount'){let p=n($id('av1').value),r=n($id('av2').value),typ=$id('av3').value;if(p>=0&&r>=0){let delta=p*r/100,res=typ==='discount'?p-delta:p+delta;h=f(typ==='discount'?'Remise':'Augmentation',[['Données',`Prix = ${fmt(p)} ; taux = ${fmt(r)} %`],['Calcul du taux',`${fmt(p)} × ${fmt(r)} ÷ 100 = <b>${fmt(delta)}</b>`],['Prix final',typ==='discount'?`${fmt(p)} − ${fmt(delta)} = <b>${fmt(res)}</b>`:`${fmt(p)} + ${fmt(delta)} = <b>${fmt(res)}</b>`],['Réponse',`Prix final = <b>${fmt(res)}</b>`]]);}}
+ $id('advResult').innerHTML=h||'<b>Vérifie les données saisies.</b>';
+});
+const conv={m:1,cm:.01,km:1000,kg:1,g:.001,L:1,mL:.001,h:3600,min:60,s:1};
+$id('cvGo')?.addEventListener('click',()=>{let v=Number($id('cvValue').value),a=$id('cvFrom').value,b=$id('cvTo').value;let groups=(a==='m'||a==='cm'||a==='km')&&(b==='m'||b==='cm'||b==='km')||(a==='kg'||a==='g')&&(b==='kg'||b==='g')||(a==='L'||a==='mL')&&(b==='L'||b==='mL')||(a==='h'||a==='min'||a==='s')&&(b==='h'||b==='min'||b==='s');$id('cvResult').innerHTML=groups&&Number.isFinite(v)?`${fmt(v)} ${a} = <b>${fmt(v*conv[a]/conv[b])} ${b}</b>`:'Choisis des unités de la même famille.';});
+let score=Number(localStorage.getItem('mn_score')||0),qnum=Number(localStorage.getItem('mn_qnum')||1),train;
+function newTrain(){let type=Math.floor(Math.random()*5),a=2+Math.floor(Math.random()*18),b=2+Math.floor(Math.random()*18);if(type===0)train={q:`Calcule ${a} + ${b}.`,a:a+b};if(type===1)train={q:`Calcule ${a} × ${b}.`,a:a*b};if(type===2)train={q:`Quel est ${a}% de ${b*10}?`,a:a*b};if(type===3)train={q:`Un rectangle mesure ${a} m sur ${b} m. Quelle est son aire ?`,a:a*b};if(type===4)train={q:`${a} élèves se partagent ${b*a} objets également. Combien chacun ?`,a:b};$id('trainQuestion').textContent=train.q;$id('trainAnswer').value='';$id('trainFeedback').textContent='';$id('score').textContent=score;$id('qnum').textContent=qnum;}
+$id('trainCheck')?.addEventListener('click',()=>{let x=Number($id('trainAnswer').value);if(x===train.a){score++;$id('trainFeedback').innerHTML='✓ Correct !';}else $id('trainFeedback').innerHTML=`À revoir. La réponse attendue est <b>${fmt(train.a)}</b>.`;localStorage.setItem('mn_score',score);});
+$id('trainNext')?.addEventListener('click',()=>{qnum++;localStorage.setItem('mn_qnum',qnum);newTrain();});newTrain();
