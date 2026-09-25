@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b5d3b">
+<meta name="description" content="Maître Jules Enock (Mèt Nòkyòk), application éducative hors connexion.">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<title>Maître Jules Enock — Mèt Nòkyòk</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<header class="appbar">
+  <div class="brand">
+    <img src="./icon-192.png" alt="Icône Mèt Nòkyòk">
+    <div><h1>Maître Jules Enock</h1><small>(Mèt Nòkyòk) · Votre réussite, notre mission</small></div>
+  </div>
+</header>
+
+<main>
+<section id="home" class="panel active">
+  <div class="hero">
+    <h2>Bienvenue 👋</h2>
+    <p>Une première version éducative, conçue pour fonctionner hors connexion. Le moteur utilise des règles et des formules programmées, pas une IA.</p>
+  </div>
+  <div class="grid">
+    <div class="card"><h3>🧮 Calcul</h3><p>Addition, soustraction, multiplication, division et fractions.</p><button class="btn" data-go="#calc">Ouvrir</button></div>
+    <div class="card"><h3>📐 Géométrie</h3><p>Périmètres et aires des principales figures.</p><button class="btn" data-go="#geo">Ouvrir</button></div>
+    <div class="card"><h3>🚗 Vitesse</h3><p>Vitesse, distance et temps.</p><button class="btn" data-go="#speed">Ouvrir</button></div>
+    <div class="card"><h3>💰 Commerce</h3><p>Prix d'achat, prix de vente, bénéfice et perte.</p><button class="btn" data-go="#commerce">Ouvrir</button></div>
+    <div class="card"><h3>📊 Moyenne</h3><p>Calcul de la moyenne arithmétique.</p><button class="btn" data-go="#mean">Ouvrir</button></div>
+    <div class="card"><h3>📚 Français</h3><p>Grammaire, conjugaison, vocabulaire et orthographe.</p><button class="btn" data-go="#french">Exercices</button></div>
+    <div class="card"><h3>✉️ Rédaction</h3><p>Construis une lettre structurée.</p><button class="btn" data-go="#letter">Rédiger</button></div>
+    <div class="card"><h3>📖 Formules</h3><p>Quelques formules de référence de la V1.</p><button class="btn" data-go="#formulas">Voir</button></div>
+  </div>
+</section>
+
+<section id="calc" class="panel">
+  <button class="btn secondary back" id="homeBtn">← Accueil</button>
+  <div class="card"><h2>🧮 Calcul</h2>
+    <form id="calcForm">
+      <label>Premier nombre<input id="a" inputmode="decimal" required></label>
+      <label>Opération<select id="op"><option>+</option><option>-</option><option>×</option><option>÷</option></select></label>
+      <label>Deuxième nombre<input id="b" inputmode="decimal" required></label>
+      <button class="btn">Calculer</button>
+    </form>
+    <div id="calcResult" class="result">Le résultat et l'opération seront affichés ici.</div>
+  </div>
+  <div class="card"><h3>Fractions</h3>
+    <form id="fracForm">
+      <div class="grid"><label>Numérateur<input id="fa" inputmode="numeric"></label><label>Dénominateur<input id="fb" inputmode="numeric"></label><label>Opération<select id="fop"><option>+</option><option>-</option><option>×</option><option>÷</option></select></label><label>Numérateur<input id="fc" inputmode="numeric"></label><label>Dénominateur<input id="fd" inputmode="numeric"></label></div>
+      <button class="btn">Résoudre</button>
+    </form><div id="fracResult" class="result"></div>
+  </div>
+</section>
+
+<section id="geo" class="panel">
+<button class="btn secondary back" onclick="show('#home')">← Accueil</button>
+<div class="card"><h2>📐 Géométrie</h2>
+<form id="geoForm">
+<label>Figure<select id="geoType"><option value="rectangle">Rectangle</option><option value="square">Carré</option><option value="triangle">Triangle</option><option value="parallelogram">Parallélogramme</option></select></label>
+<label>Ce que l'on cherche<select id="geoGoal"><option value="area">Aire / surface</option><option value="perimeter">Périmètre</option></select></label>
+<label>Première donnée<input id="g1" inputmode="decimal" placeholder="ex. longueur, côté ou base"></label>
+<label>Deuxième donnée<input id="g2" inputmode="decimal" placeholder="ex. largeur ou hauteur"></label>
+<label>Troisième donnée (si nécessaire)<input id="g3" inputmode="decimal" placeholder="ex. côté du triangle"></label>
+<button class="btn">Résoudre étape par étape</button>
+</form><div id="geoResult" class="result"></div>
+</div></section>
+
+<section id="speed" class="panel">
+<button class="btn secondary back" onclick="show('#home')">← Accueil</button>
+<div class="card"><h2>🚗 Vitesse, distance, temps</h2>
+<form id="speedForm">
+<label>Valeur 1<input id="sd" inputmode="decimal" placeholder="distance si tu cherches V ou T"></label>
+<label>Valeur 2<input id="st" inputmode="decimal" placeholder="temps si tu cherches V"></label>
+<label>Grandeur recherchée<select id="swhat"><option value="v">Vitesse</option><option value="d">Distance</option><option value="t">Temps</option></select></label>
+<button class="btn">Résoudre</button>
+</form><div id="speedResult" class="result"></div>
+<p class="small">Dans cette V1, les unités doivent être cohérentes (par exemple km et h).</p>
+</div></section>
+
+<section id="commerce" class="panel">
+<button class="btn secondary back" onclick="show('#home')">← Accueil</button>
+<div class="card"><h2>💰 Prix, bénéfice et perte</h2>
+<form id="commerceForm">
+<label>Prix d'achat unitaire<input id="pa" inputmode="decimal"></label>
+<label>Prix de vente unitaire<input id="pv" inputmode="decimal"></label>
+<label>Nombre d'articles<input id="qty" inputmode="numeric" value="1"></label>
+<button class="btn">Calculer</button>
+</form><div id="commerceResult" class="result"></div>
+<p class="small">La V1 prépare aussi l'ajout des problèmes de prix de revient et de jours de travail/chômés.</p>
+</div></section>
+
+<section id="mean" class="panel">
+<button class="btn secondary back" onclick="show('#home')">← Accueil</button>
+<div class="card"><h2>📊 Moyenne</h2>
+<form id="meanForm"><label>Nombres (séparés par espaces ou virgules)<input id="meanVals" placeholder="12, 15, 13, 10"></label><button class="btn">Calculer</button></form>
+<div id="meanResult" class="result"></div>
+</div></section>
+
+<section id="french" class="panel">
+<button class="btn secondary back" onclick="show('#home')">← Accueil</button>
+<div class="card"><h2>📚 Français</h2><span class="chip" id="exerciseType">Grammaire</span>
+<p id="exerciseQuestion"></p>
+<label>Ta réponse<input id="exerciseAnswer"></label>
+<div class="row"><button class="btn" id="checkExercise">Corriger</button><button class="btn secondary" id="nextExercise">Exercice suivant</button></div>
+<div id="exerciseFeedback" class="result"></div>
+</div>
+<div class="card"><h3>Domaines prévus</h3><div><span class="chip">Grammaire</span><span class="chip">Conjugaison</span><span class="chip">Vocabulaire</span><span class="chip">Orthographe</span><span class="chip">Dictée</span><span class="chip">Accords</span></div></div>
+</section>
+
+<section id="letter" class="panel">
+<button class="btn secondary back" onclick="show('#home')">← Accueil</button>
+<div class="card"><h2>✉️ Rédiger une lettre</h2>
+<form id="letterForm">
+<label>Destinataire<input id="ldest" placeholder="Monsieur le Directeur"></label>
+<label>Objet<input id="lsubject" placeholder="Demande"></label>
+<label>Nom du signataire<input id="lname"></label>
+<label>Contenu / demande<textarea id="lbody" placeholder="Explique ce que tu veux dire..."></textarea></label>
+<button class="btn">Rédiger la lettre</button>
+</form></div>
+<div class="card"><h3>Résultat</h3><div id="letterOut" class="letter">Ta lettre apparaîtra ici.</div></div>
+</section>
+
+<section id="formulas" class="panel">
+<button class="btn secondary back" onclick="show('#home')">← Accueil</button>
+<div class="card"><h2>📖 Formules de référence</h2>
+<ul>
+<li><b>Rectangle :</b> P = 2 × (L + l), A = L × l</li>
+<li><b>Carré :</b> P = 4 × c, A = c × c</li>
+<li><b>Triangle :</b> P = a + b + c, A = (base × hauteur) ÷ 2</li>
+<li><b>Parallélogramme :</b> P = 2 × (a + b), A = base × hauteur</li>
+<li><b>Losange :</b> P = 4 × c, A = (D × d) ÷ 2</li>
+<li><b>Trapèze :</b> P = a + b + c + d, A = ((B + b) × h) ÷ 2</li>
+<li><b>Vitesse :</b> V = D ÷ T</li>
+<li><b>Distance :</b> D = V × T</li>
+<li><b>Temps :</b> T = D ÷ V</li>
+<li><b>Moyenne :</b> somme des valeurs ÷ nombre de valeurs</li>
+</ul>
+</div></section>
+</main>
+
+<nav class="bottom"><button onclick="show('#home')">Accueil</button><button onclick="show('#calc')">Calcul</button><button onclick="show('#geo')">Géométrie</button><button onclick="show('#french')">Français</button></nav>
+<script src="./app.js"></script>
+</body>
+</html>
