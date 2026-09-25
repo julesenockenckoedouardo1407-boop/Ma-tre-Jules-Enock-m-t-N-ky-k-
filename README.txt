@@ -1,29 +1,38 @@
+Maître Jules Enock (Mèt Nòkyòk) — V1 PWA corrigée pour GitHub Pages
 
-# Maître Jules Enock (Mèt Nòkyòk) — V1
+Tous les fichiers sont directement à la racine du projet :
+index.html
+style.css
+app.js
+manifest.json
+sw.js
+icon-192.png
+icon-512.png
+README.txt
 
-PWA éducative hors connexion, sans IA.
+Le manifest utilise des chemins relatifs (./), avec start_url="./", scope="./", id="./" et display="standalone", afin de mieux fonctionner lorsque GitHub Pages publie le projet dans un sous-chemin.
 
-## Fichiers
-Tous les fichiers importants sont volontairement à la RACINE du projet :
-- index.html
-- style.css
-- app.js
-- manifest.json
-- sw.js
-- icon-192.png
-- icon-512.png
+Publication :
+1. Envoie TOUS les fichiers directement à la racine du dépôt GitHub.
+2. Active GitHub Pages avec la branche et le dossier racine.
+3. Ouvre l'adresse HTTPS de GitHub Pages.
+4. Recharge la page après le remplacement des anciens fichiers.
+5. Dans Chrome, utilise « Installer l'application » lorsqu'il est proposé.
 
-Cela évite le problème fréquent sur mobile/GitHub où les sous-dossiers `icons/`, `css/` ou `js/` ne sont pas envoyés correctement.
+Après une ancienne version, supprime l'ancien raccourci/app installé avant le nouveau test.
 
-## Installation Android
-1. Créer un dépôt GitHub.
-2. Envoyer ces fichiers directement à la racine du dépôt.
-3. Activer GitHub Pages.
-4. Ouvrir l'adresse HTTPS de GitHub Pages sur Android avec Chrome.
-5. Utiliser « Installer l'application » / « Ajouter à l'écran d'accueil » selon le navigateur.
+Vérifications utiles :
+/manifest.json
+/sw.js
+/icon-192.png
+/icon-512.png
 
-Une fois chargée, l'application met ses fichiers dans le cache du navigateur et peut fonctionner hors connexion.
+Pour un dépôt de projet GitHub Pages, ils seront normalement sous :
+/NOM-DU-DEPOT/manifest.json
+/NOM-DU-DEPOT/sw.js
+/NOM-DU-DEPOT/icon-192.png
+/NOM-DU-DEPOT/icon-512.png
 
-## Limites de la V1
-Le moteur est volontairement basé sur des règles, formules et exercices programmés. Il ne s'agit pas d'une IA.
-Le véritable analyseur de problèmes en langage naturel, les partages complexes, prix de revient, jours chômés et la bibliothèque complète de grammaire/conjugaison seront développés dans les versions suivantes.
+Après une première ouverture en ligne, le Service Worker met en cache les ressources nécessaires pour le fonctionnement hors connexion.
+
+Cette V1 n'utilise aucun service d'IA.

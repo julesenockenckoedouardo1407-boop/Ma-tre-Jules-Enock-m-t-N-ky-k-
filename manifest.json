@@ -1,13 +1,24 @@
 {
+  "id": "./",
   "name": "Maître Jules Enock (Mèt Nòkyòk)",
   "short_name": "Mèt Nòkyòk",
   "description": "Application éducative hors connexion pour les mathématiques et le français.",
-  "start_url": "./index.html",
+  "lang": "fr-FR",
+  "dir": "ltr",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
+  "display_override": [
+    "standalone"
+  ],
+  "orientation": "portrait-primary",
   "background_color": "#f7f9f6",
   "theme_color": "#0b5d3b",
-  "lang": "fr",
+  "prefer_related_applications": false,
+  "categories": [
+    "education",
+    "productivity"
+  ],
   "icons": [
     {
       "src": "./icon-192.png",
