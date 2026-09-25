@@ -45,3 +45,7 @@ textarea{min-height:130px;resize:vertical}
 ul{padding-left:20px}
 .letter{white-space:pre-wrap;background:#fffef9;border:1px solid var(--line);border-radius:12px;padding:16px;line-height:1.65}
 @media(min-width:700px){main{padding-top:26px}.hero{padding:28px}.brand h1{font-size:20px}}
+.exampleProblem{flex:1 1 240px;text-align:left;line-height:1.35}
+#problemText{min-height:170px}
+.problem-title{color:var(--green);margin-bottom:8px}
+.warning{background:#fff8e6;border-left-color:var(--gold)}

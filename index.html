@@ -27,6 +27,7 @@
   </div>
   <div class="grid">
     <div class="card"><h3>🧮 Calcul</h3><p>Addition, soustraction, multiplication, division et fractions.</p><button class="btn" data-go="#calc">Ouvrir</button></div>
+    <div class="card"><h3>🧠 Problème guidé</h3><p>Écris un problème en français et obtiens les données, la formule, le calcul et la réponse.</p><button class="btn" data-go="#problem">Résoudre</button></div>
     <div class="card"><h3>📐 Géométrie</h3><p>Périmètres et aires des principales figures.</p><button class="btn" data-go="#geo">Ouvrir</button></div>
     <div class="card"><h3>🚗 Vitesse</h3><p>Vitesse, distance et temps.</p><button class="btn" data-go="#speed">Ouvrir</button></div>
     <div class="card"><h3>💰 Commerce</h3><p>Prix d'achat, prix de vente, bénéfice et perte.</p><button class="btn" data-go="#commerce">Ouvrir</button></div>
@@ -54,6 +55,20 @@
       <button class="btn">Résoudre</button>
     </form><div id="fracResult" class="result"></div>
   </div>
+</section>
+
+<section id="problem" class="panel">
+<button class="btn secondary back" onclick="show('#home')">← Accueil</button>
+<div class="card"><h2>🧠 Résolveur de problèmes</h2>
+<p>Écris ton énoncé en français. Le moteur cherche des mots-clés et des nombres connus, puis applique une règle programmée. <b>Aucune IA n’est utilisée.</b></p>
+<textarea id="problemText" placeholder="Exemple : Un terrain rectangulaire mesure 15 m de longueur et 8 m de largeur. Trouve son périmètre et sa surface."></textarea>
+<div class="row" style="margin-top:10px"><button class="btn" id="solveProblem">Résoudre le problème</button><button class="btn secondary" id="clearProblem">Effacer</button></div>
+<div class="small" style="margin-top:10px">Pour commencer : rectangle, carré, triangle, parallélogramme, vitesse/distance/temps, pourcentage, moyenne, proportionnalité et bénéfice/perte.</div>
+</div>
+<div class="card"><h3>Exemples rapides</h3>
+<div class="row"><button class="btn secondary exampleProblem">Un terrain rectangulaire mesure 15 m de longueur et 8 m de largeur. Trouve le périmètre et la surface.</button><button class="btn secondary exampleProblem">Une voiture parcourt 120 km en 2 h. Quelle est sa vitesse ?</button><button class="btn secondary exampleProblem">Calcule 20 % de 150.</button></div>
+</div>
+<div id="problemResult" class="result">La résolution détaillée apparaîtra ici.</div>
 </section>
 
 <section id="geo" class="panel">

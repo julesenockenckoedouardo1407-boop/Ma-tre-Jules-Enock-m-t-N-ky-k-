@@ -124,3 +124,168 @@ $('#letterForm').addEventListener('submit',e=>{
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 }
+
+/* ===================== MOTEUR DE PROBLÈMES — SANS IA ===================== */
+function normText(s){
+  return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();
+}
+function nums(text){
+  const m=String(text).replace(/\u00a0/g,' ').match(/-?\d+(?:[.,]\d+)?/g)||[];
+  return m.map(x=>Number(x.replace(',','.'))).filter(Number.isFinite);
+}
+function findNumAfter(text, patterns){
+  const re=new RegExp(`(?:${patterns.join('|')})\s*(?:est|de|d[’']|a|mesure)?\s*(-?\d+(?:[.,]\d+)?)`,'i');
+  const m=text.match(re); return m?Number(m[1].replace(',','.')):null;
+}
+function unitFrom(text, units){
+  const re=new RegExp('(-?\\d+(?:[.,]\\d+)?)\\s*('+units.join('|')+')','i');
+  const m=text.match(re); return m?{value:Number(m[1].replace(',','.')),unit:m[2].toLowerCase()}:null;
+}
+function resultSteps(title, steps){
+  return `<div class="problem-title"><b>${title}</b></div>` + steps.map((x,i)=>`<div class="step"><b>${i+1}. ${x[0]}</b>${x[1]?`<div>${x[1]}</div>`:''}</div>`).join('');
+}
+function solveProblemText(raw){
+  const t=normText(raw);
+  if(!t) return {html:'<b>Écris d’abord un énoncé.</b>',ok:false};
+  const ns=nums(raw);
+
+  // POURCENTAGE
+  if(/%|pour cent|pourcentage/.test(t)){
+    const pctMatch=raw.match(/(-?\d+(?:[.,]\d+)?)\s*%/);
+    const pct=pctMatch?Number(pctMatch[1].replace(',','.')):null;
+    const after=pctMatch?raw.slice(pctMatch.index+pctMatch[0].length):raw;
+    const baseMatch=after.match(/(-?\d+(?:[.,]\d+)?)/);
+    const base=baseMatch?Number(baseMatch[1].replace(',','.')):null;
+    if(pct!==null&&base!==null){
+      const v=base*pct/100;
+      return {html:resultSteps('Pourcentage',[
+        ['Données',`Pourcentage = ${fmt(pct)} % ; nombre = ${fmt(base)}`],
+        ['Règle',`Valeur = nombre × pourcentage ÷ 100`],
+        ['Calcul',`${fmt(base)} × ${fmt(pct)} ÷ 100 = ${fmt(v)}`],
+        ['Réponse',`<b>${fmt(v)}</b>`]
+      ]),ok:true};
+    }
+  }
+
+  // RECTANGLE
+  if(/rectangle|terrain rectangulaire|champ rectangulaire|piece rectangulaire|pi[eè]ce rectangulaire/.test(t)){
+    const L=findNumAfter(raw,['longueur','L']);
+    const l=findNumAfter(raw,['largeur','l']);
+    const vals=(L!==null&&l!==null)?[L,l]:ns.slice(0,2);
+    if(vals.length>=2){
+      const a=vals[0],b=vals[1], P=2*(a+b), A=a*b;
+      const wantP=/perimetre|périmètre/.test(t), wantA=/aire|surface/.test(t);
+      const steps=[['Données',`Longueur = ${fmt(a)} ; largeur = ${fmt(b)}`]];
+      if(wantP||!wantA) steps.push(['Formule du périmètre','P = 2 × (L + l)'],['Calcul',`P = 2 × (${fmt(a)} + ${fmt(b)}) = <b>${fmt(P)}</b>`],['Réponse',`Périmètre = <b>${fmt(P)}</b>`]);
+      if(wantA||!wantP) steps.push(['Formule de l’aire','A = L × l'],['Calcul',`A = ${fmt(a)} × ${fmt(b)} = <b>${fmt(A)}</b>`],['Réponse',`Surface / aire = <b>${fmt(A)}</b>`]);
+      return {html:resultSteps('Rectangle',steps),ok:true};
+    }
+  }
+
+  // CARRE
+  if(/carre|cote du carre|carr[eé]/.test(t)){
+    const c=findNumAfter(raw,['cote','côté','c']);
+    const a=c!==null?c:ns[0];
+    if(Number.isFinite(a)){
+      const P=4*a,A=a*a; const wantP=/perimetre|périmètre/.test(t), wantA=/aire|surface/.test(t);
+      const steps=[['Donnée',`Côté = ${fmt(a)}`]];
+      if(wantP||!wantA) steps.push(['Formule','P = 4 × c'],['Calcul',`P = 4 × ${fmt(a)} = <b>${fmt(P)}</b>`],['Réponse',`Périmètre = <b>${fmt(P)}</b>`]);
+      if(wantA||!wantP) steps.push(['Formule','A = c × c'],['Calcul',`A = ${fmt(a)} × ${fmt(a)} = <b>${fmt(A)}</b>`],['Réponse',`Aire = <b>${fmt(A)}</b>`]);
+      return {html:resultSteps('Carré',steps),ok:true};
+    }
+  }
+
+  // TRIANGLE
+  if(/triangle/.test(t) && ns.length>=2){
+    const base=findNumAfter(raw,['base']) ?? ns[0];
+    const h=findNumAfter(raw,['hauteur']) ?? ns[1];
+    if(/aire|surface/.test(t)){
+      const A=base*h/2;
+      return {html:resultSteps('Triangle',[
+        ['Données',`Base = ${fmt(base)} ; hauteur = ${fmt(h)}`],
+        ['Formule','A = (base × hauteur) ÷ 2'],
+        ['Calcul',`A = (${fmt(base)} × ${fmt(h)}) ÷ 2 = <b>${fmt(A)}</b>`],
+        ['Réponse',`Aire = <b>${fmt(A)}</b>`]
+      ]),ok:true};
+    }
+  }
+
+  // VITESSE / DISTANCE / TEMPS
+  if(/vitesse|km\/h|km par heure|distance.*temps|parcourt.*en/.test(t) && ns.length>=2){
+    const km=unitFrom(raw,['km','kilometres','kilomètres','m']);
+    const h=unitFrom(raw,['h','heure','heures','min','minute','minutes']);
+    if(km&&h){
+      let d=km.value, time=h.value, timeLabel=h.unit;
+      if(/^min|minute/.test(timeLabel)){time=time/60; timeLabel='h';}
+      if(/vitesse/.test(t)||/km\/h|km par heure/.test(t)){
+        const v=d/time;
+        return {html:resultSteps('Vitesse',[
+          ['Données',`Distance = ${fmt(d)} ${km.unit} ; temps = ${fmt(h.value)} ${h.unit}`],
+          ['Formule','V = D ÷ T'],
+          ['Conversion',h.unit.match(/^min|minute/)?`${fmt(h.value)} min = ${fmt(time)} h`: 'Temps déjà exprimé en heures'],
+          ['Calcul',`V = ${fmt(d)} ÷ ${fmt(time)} = <b>${fmt(v)} km/h</b>`],
+          ['Réponse',`Vitesse = <b>${fmt(v)} km/h</b>`]
+        ]),ok:true};
+      }
+    }
+  }
+
+  // MOYENNE
+  if(/moyenne|notes|moyenne arithmetique/.test(t) && ns.length>=2){
+    const sum=ns.reduce((a,b)=>a+b,0), m=sum/ns.length;
+    return {html:resultSteps('Moyenne',[
+      ['Données',`Valeurs : ${ns.map(fmt).join(' ; ')}`],
+      ['Formule','Moyenne = somme des valeurs ÷ nombre de valeurs'],
+      ['Calcul',`Somme = ${fmt(sum)} ; nombre de valeurs = ${ns.length}`],
+      ['Calcul final',`${fmt(sum)} ÷ ${ns.length} = <b>${fmt(m)}</b>`],
+      ['Réponse',`Moyenne = <b>${fmt(m)}</b>`]
+    ]),ok:true};
+  }
+
+  // BENEFICE / PERTE
+  if(/benefice|b[eé]n[eé]fice|perte|prix d'achat|prix d’achat|prix de vente/.test(t) && ns.length>=2){
+    const pa=findNumAfter(raw,["prix d'achat","prix d’achat","achete","acheté"]) ?? ns[0];
+    const pv=findNumAfter(raw,['prix de vente','vendu','vends','vente']) ?? ns[1];
+    if(Number.isFinite(pa)&&Number.isFinite(pv)){
+      const diff=pv-pa;
+      return {html:resultSteps('Commerce',[
+        ['Données',`Prix d’achat = ${fmt(pa)} ; prix de vente = ${fmt(pv)}`],
+        ['Règle',`Bénéfice / perte = prix de vente − prix d’achat`],
+        ['Calcul',`${fmt(pv)} − ${fmt(pa)} = <b>${fmt(diff)}</b>`],
+        ['Réponse',diff>=0?`Bénéfice = <b>${fmt(diff)}</b>`:`Perte = <b>${fmt(Math.abs(diff))}</b>`]
+      ]),ok:true};
+    }
+  }
+
+  // PROPORTIONNALITE / REGLE DE TROIS
+  if(/proportion|regle de trois|r[eè]gle de trois|coutent|co[uû]te|pour .* combien/.test(t) && ns.length>=3){
+    const a=ns[0],b=ns[1],c=ns[2];
+    if(b!==0){
+      const x=b*c/a;
+      return {html:resultSteps('Proportionnalité',[
+        ['Données',`${fmt(a)} correspond à ${fmt(b)} ; on cherche la valeur correspondant à ${fmt(c)}`],
+        ['Règle de trois',`x = (${fmt(b)} × ${fmt(c)}) ÷ ${fmt(a)}`],
+        ['Calcul',`x = (${fmt(b)} × ${fmt(c)}) ÷ ${fmt(a)} = <b>${fmt(x)}</b>`],
+        ['Réponse',`Valeur cherchée = <b>${fmt(x)}</b>`]
+      ]),ok:true};
+    }
+  }
+
+  // CALCUL SIMPLE DANS UN ENONCE
+  if(ns.length===2 && /somme|total|addition|ajoute|plus/.test(t)){
+    const r=ns[0]+ns[1];
+    return {html:resultSteps('Addition', [['Données',`${fmt(ns[0])} et ${fmt(ns[1])}`],['Calcul',`${fmt(ns[0])} + ${fmt(ns[1])} = <b>${fmt(r)}</b>`],['Réponse',`<b>${fmt(r)}</b>`]]),ok:true};
+  }
+
+  return {html:`<div class="problem-title"><b>Le moteur n’a pas encore reconnu cet énoncé.</b></div><p>Essaie un problème contenant clairement les mots <b>rectangle</b>, <b>longueur</b>, <b>largeur</b>, <b>vitesse</b>, <b>distance</b>, <b>pourcentage</b>, <b>moyenne</b>, <b>proportion</b> ou <b>prix d’achat / prix de vente</b>, avec les nombres nécessaires.</p>`,ok:false};
+}
+
+if($('#solveProblem')){
+  $('#solveProblem').onclick=()=>{
+    const r=solveProblemText($('#problemText').value);
+    $('#problemResult').className='result'+(r.ok?'':' warning');
+    $('#problemResult').innerHTML=r.html;
+  };
+  $('#clearProblem').onclick=()=>{ $('#problemText').value=''; $('#problemResult').className='result'; $('#problemResult').innerHTML='La résolution détaillée apparaîtra ici.'; };
+  $$('.exampleProblem').forEach(b=>b.onclick=()=>{ $('#problemText').value=b.textContent; show('#problem'); $('#solveProblem').click(); });
+}

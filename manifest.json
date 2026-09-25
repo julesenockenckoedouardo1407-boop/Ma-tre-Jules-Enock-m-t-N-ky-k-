@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Maître Jules Enock (Mèt Nòkyòk)",
   "short_name": "Mèt Nòkyòk",
-  "description": "Application éducative hors connexion pour les mathématiques et le français.",
+  "description": "Application éducative hors connexion pour les mathématiques et le français, avec moteur de résolution par règles et formules, sans IA.",
   "lang": "fr-FR",
   "dir": "ltr",
   "start_url": "./",
