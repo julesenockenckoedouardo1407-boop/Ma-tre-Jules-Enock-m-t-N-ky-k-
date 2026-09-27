@@ -1,166 +1,1158 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b5d3b">
-<meta name="description" content="Maître Jules Enock (Mèt Nòkyòk), application éducative hors connexion.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Maître Jules Enock — Mèt Nòkyòk</title>
+<meta name="description" content="Formules et résolution de problèmes de mathématiques, grammaire française, exercices, rédaction de lettres et sciences sociales, niveau fondamental.">
+<meta name="theme-color" content="#155232">
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icon-192.png">
 <link rel="apple-touch-icon" href="./icon-192.png">
-<title>Maître Jules Enock — Mèt Nòkyòk</title>
-<link rel="stylesheet" href="./style.css">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="M. Enock">
+<style>
+:root {
+  --paper: #FAF6ED;
+  --paper-alt: #F3EDDD;
+  --rule-blue: #C9D6E8;
+  --margin-red: #B33A3A;
+  --ink: #263241;
+  --ink-soft: #5B6472;
+  --accent: #155232;
+  --accent-dark: #0E3A23;
+  --gold: #B8792F;
+  --gold-bg: #F5EBDA;
+  --accent-green: #2F6F4E;
+  --accent-green-bg: #E4EFE8;
+  --accent-red: #B33A3A;
+  --accent-red-bg: #F6E4E2;
+  --border: #DCD3BE;
+  --shadow: 0 2px 10px rgba(38, 50, 65, 0.08);
+  --radius: 10px;
+  --font-head: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+  --font-body: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+body::before {
+  content: "";
+  position: fixed; inset: 0; pointer-events: none;
+  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 35px, var(--rule-blue) 36px);
+  opacity: 0.3; z-index: 0;
+}
+#app {
+  position: relative; z-index: 1;
+  max-width: 720px; margin: 0 auto; min-height: 100vh;
+  padding-top: env(safe-area-inset-top, 0px);
+  display: flex; flex-direction: column;
+}
+header.top {
+  background: var(--accent); color: var(--paper);
+  padding: 16px 20px 12px; padding-top: calc(16px + env(safe-area-inset-top, 0px));
+  border-bottom: 4px solid var(--gold);
+}
+header.top h1 { font-family: var(--font-head); font-weight: 700; font-size: 1.3rem; margin: 0; }
+header.top p { margin: 4px 0 0; font-size: 0.82rem; color: #CFE4D8; }
+nav.tabs { display: flex; background: var(--paper-alt); border-bottom: 1px solid var(--border); overflow-x: auto; }
+nav.tabs button {
+  flex: 1 0 auto; border: none; background: transparent; font-family: var(--font-body);
+  font-size: 0.78rem; font-weight: 600; color: var(--ink-soft); padding: 11px 9px 9px;
+  cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap;
+}
+nav.tabs button.active { color: var(--accent); border-bottom-color: var(--gold); background: var(--paper); }
+main { flex: 1; padding: 16px 16px 32px; }
+section.view { display: none; }
+section.view.active { display: block; }
+h2.view-title {
+  font-family: var(--font-head); font-size: 1.1rem; color: var(--accent-dark);
+  margin: 0 0 12px; padding-left: 12px; border-left: 3px solid var(--gold);
+}
+p.view-sub { font-size: 0.84rem; color: var(--ink-soft); margin: -6px 0 14px; }
+.panel-card {
+  background: var(--paper); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 16px; margin-bottom: 14px;
+}
+.field { margin-bottom: 12px; }
+.field label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--accent-dark); margin-bottom: 4px; }
+.field input, .field select, .field textarea {
+  width: 100%; padding: 9px 10px; border: 1px solid var(--border); border-radius: 8px;
+  font-family: var(--font-body); font-size: 0.92rem; background: #FFFDF8; color: var(--ink);
+}
+.field textarea { resize: vertical; min-height: 70px; }
+.field-row { display: flex; gap: 10px; }
+.field-row .field { flex: 1; }
+.btn-primary {
+  width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none;
+  border-radius: 8px; font-size: 0.94rem; font-weight: 700; cursor: pointer; margin-top: 4px;
+}
+.btn-primary:active { background: var(--accent-dark); }
+.btn-primary.small { width: auto; padding: 8px 14px; font-size: 0.82rem; }
+.btn-secondary {
+  width: 100%; padding: 10px; background: transparent; color: var(--ink-soft);
+  border: 1px solid var(--border); border-radius: 8px; font-size: 0.86rem; cursor: pointer; margin-top: 8px;
+}
+.op-row { display: flex; gap: 8px; margin: 10px 0; }
+.op-btn {
+  flex: 1; padding: 12px 0; font-size: 1.1rem; font-weight: 700; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--paper); color: var(--accent-dark); cursor: pointer;
+}
+.op-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.result-box {
+  background: var(--gold-bg); border: 1px solid var(--gold); border-radius: 8px;
+  padding: 12px 14px; margin-top: 12px; font-size: 0.92rem; display: none;
+}
+.result-box .result-value { font-family: var(--font-head); font-size: 1.4rem; font-weight: 700; color: var(--accent-dark); }
+.result-box .steps { margin-top: 6px; color: var(--ink-soft); white-space: pre-line; }
+.cat-filter { display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto; flex-wrap: wrap; }
+.cat-filter button {
+  border: 1px solid var(--border); background: var(--paper); border-radius: 20px; padding: 6px 13px;
+  font-size: 0.78rem; color: var(--ink-soft); cursor: pointer; white-space: nowrap;
+}
+.cat-filter button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.formula-card {
+  background: var(--paper); border: 1px solid var(--border); border-left: 4px solid var(--gold);
+  border-radius: var(--radius); box-shadow: var(--shadow); padding: 12px 14px; margin-bottom: 10px;
+}
+.formula-card .f-nom { font-family: var(--font-head); font-weight: 700; font-size: 0.98rem; color: var(--ink); }
+.formula-card .f-formule {
+  font-family: "Courier New", monospace; font-size: 1rem; color: var(--accent-dark);
+  background: var(--paper-alt); display: inline-block; padding: 4px 9px; border-radius: 6px; margin: 6px 0;
+}
+.formula-card .f-explication { font-size: 0.82rem; color: var(--ink-soft); }
+.solver-match {
+  background: var(--accent-green-bg); border: 1px solid var(--accent-green); border-radius: 8px;
+  padding: 12px 14px; margin: 12px 0; display: none;
+}
+.solver-match .sm-title { font-weight: 700; color: var(--accent-green); font-size: 0.9rem; }
+.var-assign-row {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px; background: var(--paper-alt);
+  border-radius: 8px; padding: 8px 10px;
+}
+.var-assign-row label { flex: 1; font-size: 0.85rem; color: var(--ink); }
+.var-assign-row input { width: 100px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; }
+.grammar-card { background: var(--paper); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 14px 16px; margin-bottom: 12px; }
+.grammar-card h3 { font-family: var(--font-head); font-size: 1rem; color: var(--accent-dark); margin: 0 0 8px; }
+.grammar-card .g-cat { font-size: 0.7rem; color: var(--gold); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+.grammar-card p, .grammar-card ul { font-size: 0.86rem; color: var(--ink); margin: 6px 0; }
+.grammar-card ul { padding-left: 20px; }
+.quiz-box { background: var(--paper); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 16px; }
+.quiz-question { font-family: var(--font-head); font-size: 1.02rem; color: var(--ink); margin-bottom: 14px; }
+.quiz-option {
+  display: block; width: 100%; text-align: left; padding: 11px 13px; margin-bottom: 8px;
+  border: 1px solid var(--border); border-radius: 8px; background: var(--paper-alt); font-size: 0.9rem;
+  color: var(--ink); cursor: pointer;
+}
+.quiz-option.correct { background: var(--accent-green-bg); border-color: var(--accent-green); color: var(--accent-green); font-weight: 700; }
+.quiz-option.wrong { background: var(--accent-red-bg); border-color: var(--accent-red); color: var(--accent-red); }
+.quiz-explication { font-size: 0.84rem; color: var(--ink-soft); margin-top: 10px; display: none; background: var(--gold-bg); padding: 10px 12px; border-radius: 8px; }
+.quiz-score { text-align: center; font-size: 0.82rem; color: var(--ink-soft); margin-bottom: 10px; }
+.geo-item {
+  display: flex; justify-content: space-between; align-items: center; background: var(--paper);
+  border: 1px solid var(--border); border-left: 4px solid var(--gold); border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 10px; cursor: pointer; font-size: 0.92rem; color: var(--ink); font-weight: 600;
+}
+.geo-reader { background: var(--paper); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 16px; }
+.geo-reader h3 { font-family: var(--font-head); color: var(--accent-dark); margin-top: 0; }
+.geo-reader p, .geo-reader ul { font-size: 0.9rem; line-height: 1.6; }
+.geo-nav { display: flex; gap: 8px; margin-top: 14px; }
+.geo-nav button { flex: 1; }
+.letter-sheet {
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 24px 20px; min-height: 400px; font-family: var(--font-head); font-size: 0.95rem; line-height: 1.7;
+  white-space: pre-wrap;
+}
+.about-card { background: var(--paper); border: 1px solid var(--border); border-left: 4px solid var(--gold);
+  border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; text-align: center; }
+.about-card .logo-mark { font-family: var(--font-head); font-size: 1.25rem; color: var(--accent-dark); font-weight: 700; }
+.about-card p { color: var(--ink-soft); font-size: 0.88rem; }
+.about-card .contact { margin-top: 12px; padding: 10px; background: var(--paper-alt); border-radius: 8px; font-size: 0.86rem; }
+.note-box { font-size: 0.78rem; color: var(--ink-soft); background: var(--paper-alt); border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; }
+.dictee-item {
+  display: flex; justify-content: space-between; align-items: center; background: var(--paper);
+  border: 1px solid var(--border); border-left: 4px solid var(--gold); border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 10px; cursor: pointer; font-size: 0.9rem; color: var(--ink);
+}
+.dictee-item .d-niveau { font-size: 0.7rem; color: var(--gold); font-weight: 700; text-transform: uppercase; }
+.player-controls { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+.player-controls button { flex: 1; min-width: 90px; }
+.player-controls select { flex: 1; min-width: 90px; padding: 9px; border-radius: 8px; border: 1px solid var(--border); }
+.diff-word { padding: 1px 2px; border-radius: 3px; }
+.diff-word.ok { color: var(--accent-green); }
+.diff-word.bad { color: var(--accent-red); text-decoration: line-through; }
+.diff-word.bad .correction { text-decoration: none; color: var(--accent-green); font-weight: 700; margin-left: 3px; }
+.dictee-score { font-family: var(--font-head); font-size: 1.1rem; color: var(--accent-dark); margin-bottom: 8px; }
+@media print {
+  body::before { display: none; }
+  header.top, nav.tabs, main > section:not(#view-lettre) { display: none !important; }
+  #view-lettre { display: block !important; }
+  #view-lettre .view-title, #view-lettre .letter-actions, #view-lettre .letter-form { display: none !important; }
+  .letter-sheet { box-shadow: none; border: none; }
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1E1B16; --paper-alt: #262219; --ink: #EDE6D6; --ink-soft: #B8AF9C; --border: #3A3428;
+  }
+  .panel-card, .field input, .field select, .field textarea, .formula-card, .grammar-card, .quiz-box, .geo-item, .geo-reader {
+    background: #24211A; color: var(--ink);
+  }
+}
+</style>
 </head>
 <body>
-<header class="appbar">
-  <div class="brand">
-    <img src="./icon-192.png" alt="Icône Mèt Nòkyòk">
-    <div><h1>Maître Jules Enock</h1><small>(Mèt Nòkyòk) · Votre réussite, notre mission</small></div>
-  </div>
-</header>
+<div id="app">
 
-<main>
-<section id="home" class="panel active">
-  <div class="hero">
-    <h2>Bienvenue 👋</h2>
-    <p>Une première version éducative, conçue pour fonctionner hors connexion. Le moteur utilise des règles et des formules programmées, pas une IA.</p>
-  </div>
-  <div class="grid">
-    <div class="card"><h3>🧮 Calcul</h3><p>Addition, soustraction, multiplication, division et fractions.</p><button class="btn" data-go="#calc">Ouvrir</button></div>
-    <div class="card"><h3>🧠 Problème guidé</h3><p>Écris un problème en français et obtiens les données, la formule, le calcul et la réponse.</p><button class="btn" data-go="#problem">Résoudre</button></div>
-    <div class="card"><h3>📐 Géométrie</h3><p>Périmètres et aires des principales figures.</p><button class="btn" data-go="#geo">Ouvrir</button></div>
-    <div class="card"><h3>🚗 Vitesse</h3><p>Vitesse, distance et temps.</p><button class="btn" data-go="#speed">Ouvrir</button></div>
-    <div class="card"><h3>💰 Commerce</h3><p>Prix d'achat, prix de vente, bénéfice et perte.</p><button class="btn" data-go="#commerce">Ouvrir</button></div>
-    <div class="card"><h3>📊 Moyenne</h3><p>Calcul de la moyenne arithmétique.</p><button class="btn" data-go="#mean">Ouvrir</button></div>
-    <div class="card"><h3>📚 Français</h3><p>Grammaire, conjugaison, vocabulaire et orthographe.</p><button class="btn" data-go="#french">Exercices</button></div>
-    <div class="card"><h3>✉️ Rédaction</h3><p>Construis une lettre structurée.</p><button class="btn" data-go="#letter">Rédiger</button></div>
-    <div class="card"><h3>📖 Formules</h3><p>Quelques formules de référence de la V1.</p><button class="btn" data-go="#formulas">Voir</button></div><div class="card"><h3>🧩 Problèmes avancés</h3><p>Partages, prix de revient, jours de travail et problèmes composés.</p><button class="btn" data-go="#advanced">Ouvrir</button></div><div class="card"><h3>📏 Conversions</h3><p>Longueur, masse, capacité, temps et vitesse.</p><button class="btn" data-go="#convert">Ouvrir</button></div><div class="card"><h3>🧠 Entraînement</h3><p>Génère des exercices aléatoires et suis ton score.</p><button class="btn" data-go="#training">S'entraîner</button></div>
-  </div>
-</section>
+  <header class="top">
+    <h1>Maître Jules Enock</h1>
+    <p>Mèt Nòkyòk — Maths, Français &amp; Sciences sociales</p>
+  </header>
 
-<section id="calc" class="panel">
-  <button class="btn secondary back" id="homeBtn">← Accueil</button>
-  <div class="card"><h2>🧮 Calcul</h2>
-    <form id="calcForm">
-      <label>Premier nombre<input id="a" inputmode="decimal" required></label>
-      <label>Opération<select id="op"><option>+</option><option>-</option><option>×</option><option>÷</option></select></label>
-      <label>Deuxième nombre<input id="b" inputmode="decimal" required></label>
-      <button class="btn">Calculer</button>
-    </form>
-    <div id="calcResult" class="result">Le résultat et l'opération seront affichés ici.</div>
-  </div>
-  <div class="card"><h3>Fractions</h3>
-    <form id="fracForm">
-      <div class="grid"><label>Numérateur<input id="fa" inputmode="numeric"></label><label>Dénominateur<input id="fb" inputmode="numeric"></label><label>Opération<select id="fop"><option>+</option><option>-</option><option>×</option><option>÷</option></select></label><label>Numérateur<input id="fc" inputmode="numeric"></label><label>Dénominateur<input id="fd" inputmode="numeric"></label></div>
-      <button class="btn">Résoudre</button>
-    </form><div id="fracResult" class="result"></div>
-  </div>
-</section>
+  <nav class="tabs">
+    <button data-view="calculer" class="active">Calculer</button>
+    <button data-view="formules">Formules</button>
+    <button data-view="resoudre">Résoudre</button>
+    <button data-view="fractions">Fractions</button>
+    <button data-view="grammaire">Grammaire</button>
+    <button data-view="exercices">Exercices</button>
+    <button data-view="lettre">Lettre</button>
+    <button data-view="geo">Géo</button>
+    <button data-view="sciences">Sciences</button>
+    <button data-view="dictees">Dictées</button>
+    <button data-view="apropos">Infos</button>
+  </nav>
 
-<section id="problem" class="panel">
-<button class="btn secondary back" onclick="show('#home')">← Accueil</button>
-<div class="card"><h2>🧠 Résolveur de problèmes</h2>
-<p>Écris ton énoncé en français. Le moteur cherche des mots-clés et des nombres connus, puis applique une règle programmée. <b>Aucune IA n’est utilisée.</b></p>
-<textarea id="problemText" placeholder="Exemple : Un terrain rectangulaire mesure 15 m de longueur et 8 m de largeur. Trouve son périmètre et sa surface."></textarea>
-<div class="row" style="margin-top:10px"><button class="btn" id="solveProblem">Résoudre le problème</button><button class="btn secondary" id="clearProblem">Effacer</button></div>
-<div class="small" style="margin-top:10px">Pour commencer : rectangle, carré, triangle, parallélogramme, vitesse/distance/temps, pourcentage, moyenne, proportionnalité et bénéfice/perte.</div>
+  <main>
+
+    <!-- ===== Calculer ===== -->
+    <section id="view-calculer" class="view active">
+      <h2 class="view-title">Calculatrice</h2>
+      <p class="view-sub">Additions, soustractions, multiplications, divisions.</p>
+
+      <div class="panel-card">
+        <div class="field-row">
+          <div class="field"><label for="c-a">Nombre 1</label><input type="number" id="c-a" inputmode="decimal"></div>
+          <div class="field"><label for="c-b">Nombre 2</label><input type="number" id="c-b" inputmode="decimal"></div>
+        </div>
+        <div class="op-row">
+          <button type="button" class="op-btn active" data-op="+">+</button>
+          <button type="button" class="op-btn" data-op="-">−</button>
+          <button type="button" class="op-btn" data-op="*">×</button>
+          <button type="button" class="op-btn" data-op="/">÷</button>
+        </div>
+        <button type="button" class="btn-primary" id="calc-run">Calculer</button>
+        <div class="result-box" id="calc-result">
+          <div class="result-value" id="calc-value"></div>
+          <div class="steps" id="calc-steps"></div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="field">
+          <label for="expr-input">Ou tape une opération complète (ex : 24 + 15 × 2)</label>
+          <input type="text" id="expr-input" placeholder="Ex. (12 + 8) × 3">
+        </div>
+        <button type="button" class="btn-primary" id="expr-run">Calculer l'expression</button>
+        <div class="result-box" id="expr-result">
+          <div class="result-value" id="expr-value"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Formules ===== -->
+    <section id="view-formules" class="view">
+      <h2 class="view-title">Bibliothèque de formules</h2>
+      <div class="cat-filter" id="formule-cats"></div>
+
+      <div class="panel-card" id="partage-prop-card">
+        <div class="field">
+          <label>Partage proportionnel (à des parts inégales, ex. 2, 3, 4)</label>
+        </div>
+        <div class="field-row">
+          <div class="field"><label for="pp-total">Total à partager</label><input type="number" id="pp-total"></div>
+          <div class="field"><label for="pp-parts">Parts (séparées par des virgules)</label><input type="text" id="pp-parts" placeholder="2, 3, 4"></div>
+        </div>
+        <button type="button" class="btn-primary" id="pp-run">Calculer le partage</button>
+        <div class="result-box" id="pp-result">
+          <div class="result-value" id="pp-value"></div>
+          <div class="steps" id="pp-steps"></div>
+        </div>
+      </div>
+
+      <div id="formule-list"></div>
+    </section>
+
+    <!-- ===== Résoudre ===== -->
+    <section id="view-resoudre" class="view">
+      <h2 class="view-title">Résoudre un problème</h2>
+      <p class="view-sub">Colle ou écris le problème ; l'app propose une formule (sans IA, par mots-clés) — à toi de confirmer.</p>
+
+      <div class="panel-card">
+        <div class="field">
+          <label for="solve-input">Texte du problème</label>
+          <textarea id="solve-input" placeholder="Ex. Un rectangle a 15 m de longueur et 6 m de largeur. Quel est son périmètre ?"></textarea>
+        </div>
+        <button type="button" class="btn-primary" id="solve-analyse">Analyser le problème</button>
+      </div>
+
+      <div class="solver-match" id="solver-match">
+        <div class="sm-title" id="sm-title"></div>
+        <div class="field" style="margin-top:10px;">
+          <label for="sm-choice">Pas la bonne formule ? Choisis-en une autre :</label>
+          <select id="sm-choice"></select>
+        </div>
+        <div id="sm-vars"></div>
+        <button type="button" class="btn-primary" id="sm-resoudre">Résoudre</button>
+        <div class="result-box" id="sm-result">
+          <div class="result-value" id="sm-value"></div>
+          <div class="steps" id="sm-steps"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Fractions ===== -->
+    <section id="view-fractions" class="view">
+      <h2 class="view-title">Fractions</h2>
+
+      <div class="panel-card">
+        <div class="field-row">
+          <div class="field"><label for="fr-n1">Numérateur 1</label><input type="number" id="fr-n1"></div>
+          <div class="field"><label for="fr-d1">Dénominateur 1</label><input type="number" id="fr-d1"></div>
+        </div>
+        <div class="op-row">
+          <button type="button" class="op-btn active" data-fop="+">+</button>
+          <button type="button" class="op-btn" data-fop="-">−</button>
+          <button type="button" class="op-btn" data-fop="*">×</button>
+          <button type="button" class="op-btn" data-fop="/">÷</button>
+        </div>
+        <div class="field-row">
+          <div class="field"><label for="fr-n2">Numérateur 2</label><input type="number" id="fr-n2"></div>
+          <div class="field"><label for="fr-d2">Dénominateur 2</label><input type="number" id="fr-d2"></div>
+        </div>
+        <button type="button" class="btn-primary" id="fr-run">Calculer</button>
+        <div class="result-box" id="fr-result">
+          <div class="result-value" id="fr-value"></div>
+          <div class="steps" id="fr-steps"></div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="field-row">
+          <div class="field"><label for="fs-n">Numérateur</label><input type="number" id="fs-n"></div>
+          <div class="field"><label for="fs-d">Dénominateur</label><input type="number" id="fs-d"></div>
+        </div>
+        <button type="button" class="btn-primary" id="fs-run">Simplifier la fraction</button>
+        <div class="result-box" id="fs-result">
+          <div class="result-value" id="fs-value"></div>
+          <div class="steps" id="fs-steps"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Grammaire ===== -->
+    <section id="view-grammaire" class="view">
+      <h2 class="view-title">Grammaire française</h2>
+      <p class="view-sub">Référence pour le niveau fondamental (non exhaustive).</p>
+      <div class="cat-filter" id="gram-cats"></div>
+      <div id="gram-list"></div>
+    </section>
+
+    <!-- ===== Exercices ===== -->
+    <section id="view-exercices" class="view">
+      <h2 class="view-title">Exercices</h2>
+      <div class="cat-filter" id="exo-cats"></div>
+      <div class="quiz-score" id="quiz-score">Score : 0 / 0</div>
+      <div class="quiz-box" id="quiz-box">
+        <div class="quiz-question" id="quiz-question">Choisis une catégorie pour commencer.</div>
+        <div id="quiz-options"></div>
+        <div class="quiz-explication" id="quiz-explication"></div>
+      </div>
+      <button type="button" class="btn-secondary" id="quiz-next">Question suivante</button>
+
+      <div class="panel-card" style="margin-top:18px;">
+        <div class="field"><label>Ajouter un exercice</label></div>
+        <div class="field">
+          <select id="ne-cat">
+            <option>Grammaire</option><option>Conjugaison</option><option>Vocabulaire</option><option>Orthographe</option>
+          </select>
+        </div>
+        <div class="field"><input type="text" id="ne-question" placeholder="Question"></div>
+        <div class="field"><input type="text" id="ne-opt0" placeholder="Réponse correcte"></div>
+        <div class="field"><input type="text" id="ne-opt1" placeholder="Mauvaise réponse 1"></div>
+        <div class="field"><input type="text" id="ne-opt2" placeholder="Mauvaise réponse 2 (optionnel)"></div>
+        <div class="field"><input type="text" id="ne-explication" placeholder="Explication (optionnel)"></div>
+        <button type="button" class="btn-primary" id="ne-add">Ajouter à la banque d'exercices</button>
+      </div>
+    </section>
+
+    <!-- ===== Lettre ===== -->
+    <section id="view-lettre" class="view">
+      <h2 class="view-title">Rédiger une lettre</h2>
+
+      <div class="panel-card letter-form">
+        <div class="field">
+          <label for="lt-type">Type de lettre</label>
+          <select id="lt-type">
+            <option value="amicale">Lettre amicale / familiale</option>
+            <option value="formelle">Lettre formelle / administrative</option>
+            <option value="excuse">Lettre d'excuse</option>
+            <option value="demande">Lettre de demande</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="field"><label for="lt-ville">Ville</label><input type="text" id="lt-ville" placeholder="Ex. Canaan"></div>
+          <div class="field"><label for="lt-date">Date</label><input type="date" id="lt-date"></div>
+        </div>
+        <div class="field"><label for="lt-exp">Ton nom (expéditeur)</label><input type="text" id="lt-exp"></div>
+        <div class="field"><label for="lt-dest">Destinataire</label><input type="text" id="lt-dest" placeholder="Ex. Monsieur le Directeur / Ma chère tante"></div>
+        <div class="field" id="lt-objet-field"><label for="lt-objet">Objet (lettre formelle)</label><input type="text" id="lt-objet" placeholder="Ex. Demande de certificat de scolarité"></div>
+        <div class="field"><label for="lt-corps">Corps de la lettre (ton message)</label><textarea id="lt-corps" placeholder="Écris ici ce que tu veux dire..."></textarea></div>
+        <button type="button" class="btn-primary" id="lt-generer">Générer la lettre</button>
+      </div>
+
+      <div class="letter-actions" style="display:flex; gap:8px; margin-bottom:10px;">
+        <button type="button" class="btn-secondary" id="lt-print" style="margin-top:0;">Imprimer / PDF</button>
+      </div>
+      <div class="letter-sheet" id="lt-sheet">La lettre générée apparaîtra ici.</div>
+    </section>
+
+    <!-- ===== Géo ===== -->
+    <section id="view-geo" class="view">
+      <h2 class="view-title">Sciences sociales — Géographie</h2>
+      <div id="geo-list"></div>
+      <div class="geo-reader" id="geo-reader" style="display:none;">
+        <h3 id="geo-reader-title"></h3>
+        <div id="geo-reader-content"></div>
+        <div class="geo-nav">
+          <button type="button" class="btn-secondary" id="geo-prev" style="margin-top:0;">◀ Précédent</button>
+          <button type="button" class="btn-secondary" id="geo-back" style="margin-top:0;">Liste des chapitres</button>
+          <button type="button" class="btn-secondary" id="geo-next" style="margin-top:0;">Suivant ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Sciences naturelles ===== -->
+    <section id="view-sciences" class="view">
+      <h2 class="view-title">Sciences naturelles</h2>
+      <div id="sciences-list"></div>
+      <div class="geo-reader" id="sciences-reader" style="display:none;">
+        <h3 id="sciences-reader-title"></h3>
+        <div id="sciences-reader-content"></div>
+        <div class="geo-nav">
+          <button type="button" class="btn-secondary" id="sciences-prev" style="margin-top:0;">◀ Précédent</button>
+          <button type="button" class="btn-secondary" id="sciences-back" style="margin-top:0;">Liste des chapitres</button>
+          <button type="button" class="btn-secondary" id="sciences-next" style="margin-top:0;">Suivant ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Dictées audio ===== -->
+    <section id="view-dictees" class="view">
+      <h2 class="view-title">Dictées audio</h2>
+      <p class="view-sub">La lecture utilise la synthèse vocale du téléphone (voix française) — pas d'IA, un simple texte pré-écrit lu à voix haute.</p>
+
+      <div id="dictee-list"></div>
+
+      <div class="panel-card" id="dictee-player" style="display:none;">
+        <div class="field">
+          <label id="dictee-title" style="font-size:0.95rem;"></label>
+        </div>
+        <div class="player-controls">
+          <select id="dictee-rate">
+            <option value="0.7">Lecture lente</option>
+            <option value="0.85" selected>Lecture normale</option>
+            <option value="1">Lecture rapide</option>
+          </select>
+          <button type="button" class="btn-primary small" id="dictee-play">▶ Écouter</button>
+          <button type="button" class="btn-primary small" id="dictee-pause">⏸ Pause</button>
+          <button type="button" class="btn-primary small" id="dictee-stop">⏹ Arrêter</button>
+        </div>
+        <div class="field" style="display:flex; align-items:center; gap:8px;">
+          <input type="checkbox" id="dictee-ponctuation" checked style="width:auto;">
+          <label for="dictee-ponctuation" style="margin:0; font-size:0.82rem;">Dire la ponctuation à voix haute (virgule, point...)</label>
+        </div>
+        <div class="field">
+          <label for="dictee-input">Écris ce que tu entends</label>
+          <textarea id="dictee-input" placeholder="Écris la dictée ici..."></textarea>
+        </div>
+        <button type="button" class="btn-primary" id="dictee-check">Vérifier ma dictée</button>
+        <button type="button" class="btn-secondary" id="dictee-back">Retour à la liste</button>
+        <div class="result-box" id="dictee-result">
+          <div class="dictee-score" id="dictee-score-value"></div>
+          <div id="dictee-diff"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== À propos ===== -->
+    <section id="view-apropos" class="view">
+      <h2 class="view-title">À propos</h2>
+      <div class="about-card">
+        <div class="logo-mark">Maître Jules Enock</div>
+        <p>Mèt Nòkyòk — un compagnon d'étude pour le niveau fondamental : mathématiques (formules, résolution de problèmes, fractions), français (grammaire, exercices, rédaction de lettres) et sciences sociales (géographie).</p>
+        <div class="note-box" style="text-align:left;">
+          Cette app fonctionne <strong>entièrement sans intelligence artificielle</strong> : la résolution de problèmes utilise une reconnaissance de mots-clés (à confirmer par l'élève), la grammaire/les exercices/les sciences sont un contenu écrit à l'avance, et les dictées utilisent la synthèse vocale du téléphone (voix déjà installée sur l'appareil).
+        </div>
+        <div class="contact">Contact : +509 4040 9680</div>
+      </div>
+    </section>
+
+  </main>
 </div>
-<div class="card"><h3>Exemples rapides</h3>
-<div class="row"><button class="btn secondary exampleProblem">Un terrain rectangulaire mesure 15 m de longueur et 8 m de largeur. Trouve le périmètre et la surface.</button><button class="btn secondary exampleProblem">Une voiture parcourt 120 km en 2 h. Quelle est sa vitesse ?</button><button class="btn secondary exampleProblem">Calcule 20 % de 150.</button></div>
-</div>
-<div id="problemResult" class="result">La résolution détaillée apparaîtra ici.</div>
-</section>
 
-<section id="geo" class="panel">
-<button class="btn secondary back" onclick="show('#home')">← Accueil</button>
-<div class="card"><h2>📐 Géométrie</h2>
-<form id="geoForm">
-<label>Figure<select id="geoType"><option value="rectangle">Rectangle</option><option value="square">Carré</option><option value="triangle">Triangle</option><option value="parallelogram">Parallélogramme</option></select></label>
-<label>Ce que l'on cherche<select id="geoGoal"><option value="area">Aire / surface</option><option value="perimeter">Périmètre</option></select></label>
-<label>Première donnée<input id="g1" inputmode="decimal" placeholder="ex. longueur, côté ou base"></label>
-<label>Deuxième donnée<input id="g2" inputmode="decimal" placeholder="ex. largeur ou hauteur"></label>
-<label>Troisième donnée (si nécessaire)<input id="g3" inputmode="decimal" placeholder="ex. côté du triangle"></label>
-<button class="btn">Résoudre étape par étape</button>
-</form><div id="geoResult" class="result"></div>
-</div></section>
+<script>
+const FORMULES = [{"id": "carre_perimetre", "categorie": "Quadrilatères", "nom": "Périmètre du carré", "formule": "P = 4 × c", "variables": [{"code": "c", "label": "côté"}], "resultat": {"code": "P", "label": "périmètre"}, "expression": "4*c", "motsCles": ["perimetre", "carre"], "explication": "On multiplie le côté par 4, car un carré a 4 côtés égaux."}, {"id": "carre_aire", "categorie": "Quadrilatères", "nom": "Aire (surface) du carré", "formule": "A = c × c", "variables": [{"code": "c", "label": "côté"}], "resultat": {"code": "A", "label": "aire"}, "expression": "c*c", "motsCles": ["aire", "surface", "carre"], "explication": "On multiplie le côté par lui-même."}, {"id": "carre_cote_perimetre", "categorie": "Quadrilatères", "nom": "Côté du carré (à partir du périmètre)", "formule": "c = P ÷ 4", "variables": [{"code": "P", "label": "périmètre"}], "resultat": {"code": "c", "label": "côté"}, "expression": "P/4", "motsCles": ["cote", "carre", "perimetre"], "explication": "On divise le périmètre par 4."}, {"id": "carre_cote_aire", "categorie": "Quadrilatères", "nom": "Côté du carré (à partir de l'aire)", "formule": "c = √A", "variables": [{"code": "A", "label": "aire"}], "resultat": {"code": "c", "label": "côté"}, "expression": "Math.sqrt(A)", "motsCles": ["cote", "carre", "aire", "surface"], "explication": "On cherche le nombre qui, multiplié par lui-même, donne l'aire (racine carrée)."}, {"id": "rectangle_perimetre", "categorie": "Quadrilatères", "nom": "Périmètre du rectangle", "formule": "P = 2 × (L + l)", "variables": [{"code": "L", "label": "longueur"}, {"code": "l", "label": "largeur"}], "resultat": {"code": "P", "label": "périmètre"}, "expression": "2*(L+l)", "motsCles": ["perimetre", "rectangle"], "explication": "On additionne la longueur et la largeur, puis on multiplie le résultat par 2."}, {"id": "rectangle_aire", "categorie": "Quadrilatères", "nom": "Aire (surface) du rectangle", "formule": "A = L × l", "variables": [{"code": "L", "label": "longueur"}, {"code": "l", "label": "largeur"}], "resultat": {"code": "A", "label": "aire"}, "expression": "L*l", "motsCles": ["aire", "surface", "rectangle"], "explication": "On multiplie la longueur par la largeur."}, {"id": "rectangle_longueur_p", "categorie": "Quadrilatères", "nom": "Longueur du rectangle (à partir du périmètre)", "formule": "L = (P ÷ 2) − l", "variables": [{"code": "P", "label": "périmètre"}, {"code": "l", "label": "largeur"}], "resultat": {"code": "L", "label": "longueur"}, "expression": "(P/2)-l", "motsCles": ["longueur", "rectangle", "perimetre"], "explication": "On divise le périmètre par 2, puis on soustrait la largeur."}, {"id": "rectangle_largeur_p", "categorie": "Quadrilatères", "nom": "Largeur du rectangle (à partir du périmètre)", "formule": "l = (P ÷ 2) − L", "variables": [{"code": "P", "label": "périmètre"}, {"code": "L", "label": "longueur"}], "resultat": {"code": "l", "label": "largeur"}, "expression": "(P/2)-L", "motsCles": ["largeur", "rectangle", "perimetre"], "explication": "On divise le périmètre par 2, puis on soustrait la longueur."}, {"id": "rectangle_longueur_a", "categorie": "Quadrilatères", "nom": "Longueur du rectangle (à partir de l'aire)", "formule": "L = A ÷ l", "variables": [{"code": "A", "label": "aire"}, {"code": "l", "label": "largeur"}], "resultat": {"code": "L", "label": "longueur"}, "expression": "A/l", "motsCles": ["longueur", "rectangle", "aire", "surface"], "explication": "On divise l'aire par la largeur."}, {"id": "rectangle_largeur_a", "categorie": "Quadrilatères", "nom": "Largeur du rectangle (à partir de l'aire)", "formule": "l = A ÷ L", "variables": [{"code": "A", "label": "aire"}, {"code": "L", "label": "longueur"}], "resultat": {"code": "l", "label": "largeur"}, "expression": "A/L", "motsCles": ["largeur", "rectangle", "aire", "surface"], "explication": "On divise l'aire par la longueur."}, {"id": "losange_aire", "categorie": "Quadrilatères", "nom": "Aire du losange", "formule": "A = (D × d) ÷ 2", "variables": [{"code": "D", "label": "grande diagonale"}, {"code": "d", "label": "petite diagonale"}], "resultat": {"code": "A", "label": "aire"}, "expression": "(D*d)/2", "motsCles": ["aire", "surface", "losange", "diagonale"], "explication": "On multiplie les deux diagonales, puis on divise par 2."}, {"id": "losange_perimetre", "categorie": "Quadrilatères", "nom": "Périmètre du losange", "formule": "P = 4 × c", "variables": [{"code": "c", "label": "côté"}], "resultat": {"code": "P", "label": "périmètre"}, "expression": "4*c", "motsCles": ["perimetre", "losange"], "explication": "On multiplie le côté par 4, car les 4 côtés d'un losange sont égaux."}, {"id": "parallelogramme_aire", "categorie": "Quadrilatères", "nom": "Aire du parallélogramme", "formule": "A = b × h", "variables": [{"code": "b", "label": "base"}, {"code": "h", "label": "hauteur"}], "resultat": {"code": "A", "label": "aire"}, "expression": "b*h", "motsCles": ["aire", "surface", "parallelogramme"], "explication": "On multiplie la base par la hauteur."}, {"id": "parallelogramme_perimetre", "categorie": "Quadrilatères", "nom": "Périmètre du parallélogramme", "formule": "P = 2 × (a + b)", "variables": [{"code": "a", "label": "côté a"}, {"code": "b", "label": "côté b"}], "resultat": {"code": "P", "label": "périmètre"}, "expression": "2*(a+b)", "motsCles": ["perimetre", "parallelogramme"], "explication": "On additionne deux côtés différents, puis on multiplie par 2."}, {"id": "trapeze_aire", "categorie": "Quadrilatères", "nom": "Aire du trapèze", "formule": "A = ((B + b) × h) ÷ 2", "variables": [{"code": "B", "label": "grande base"}, {"code": "b", "label": "petite base"}, {"code": "h", "label": "hauteur"}], "resultat": {"code": "A", "label": "aire"}, "expression": "((B+b)*h)/2", "motsCles": ["aire", "surface", "trapeze"], "explication": "On additionne les deux bases, on multiplie par la hauteur, puis on divise par 2."}, {"id": "triangle_perimetre", "categorie": "Triangles", "nom": "Périmètre du triangle", "formule": "P = a + b + c", "variables": [{"code": "a", "label": "côté a"}, {"code": "b", "label": "côté b"}, {"code": "c", "label": "côté c"}], "resultat": {"code": "P", "label": "périmètre"}, "expression": "a+b+c", "motsCles": ["perimetre", "triangle"], "explication": "On additionne les longueurs des 3 côtés."}, {"id": "triangle_aire", "categorie": "Triangles", "nom": "Aire du triangle", "formule": "A = (base × hauteur) ÷ 2", "variables": [{"code": "base", "label": "base"}, {"code": "hauteur", "label": "hauteur"}], "resultat": {"code": "A", "label": "aire"}, "expression": "(base*hauteur)/2", "motsCles": ["aire", "surface", "triangle"], "explication": "On multiplie la base par la hauteur, puis on divise par 2."}, {"id": "triangle_equilateral_perimetre", "categorie": "Triangles", "nom": "Périmètre du triangle équilatéral", "formule": "P = 3 × c", "variables": [{"code": "c", "label": "côté"}], "resultat": {"code": "P", "label": "périmètre"}, "expression": "3*c", "motsCles": ["perimetre", "triangle", "equilateral"], "explication": "On multiplie le côté par 3, car les 3 côtés sont égaux."}, {"id": "triangle_isocele_perimetre", "categorie": "Triangles", "nom": "Périmètre du triangle isocèle", "formule": "P = 2 × c + base", "variables": [{"code": "c", "label": "côté égal"}, {"code": "base", "label": "base"}], "resultat": {"code": "P", "label": "périmètre"}, "expression": "2*c+base", "motsCles": ["perimetre", "triangle", "isocele"], "explication": "On multiplie le côté égal par 2, puis on ajoute la base."}, {"id": "benefice", "categorie": "Commerce", "nom": "Bénéfice", "formule": "B = PV − PA", "variables": [{"code": "PV", "label": "prix de vente"}, {"code": "PA", "label": "prix d'achat"}], "resultat": {"code": "B", "label": "bénéfice"}, "expression": "PV-PA", "motsCles": ["benefice", "gagne", "gain", "prix de vente", "prix d achat"], "explication": "On soustrait le prix d'achat du prix de vente (quand on vend plus cher qu'on a acheté)."}, {"id": "perte", "categorie": "Commerce", "nom": "Perte", "formule": "Pe = PA − PV", "variables": [{"code": "PA", "label": "prix d'achat"}, {"code": "PV", "label": "prix de vente"}], "resultat": {"code": "Pe", "label": "perte"}, "expression": "PA-PV", "motsCles": ["perte", "perd", "prix de vente", "prix d achat"], "explication": "On soustrait le prix de vente du prix d'achat (quand on vend moins cher qu'on a acheté)."}, {"id": "prix_vente", "categorie": "Commerce", "nom": "Prix de vente", "formule": "PV = PA + B", "variables": [{"code": "PA", "label": "prix d'achat"}, {"code": "B", "label": "bénéfice"}], "resultat": {"code": "PV", "label": "prix de vente"}, "expression": "PA+B", "motsCles": ["prix de vente", "benefice"], "explication": "On additionne le prix d'achat et le bénéfice voulu."}, {"id": "prix_achat", "categorie": "Commerce", "nom": "Prix d'achat", "formule": "PA = PV − B", "variables": [{"code": "PV", "label": "prix de vente"}, {"code": "B", "label": "bénéfice"}], "resultat": {"code": "PA", "label": "prix d'achat"}, "expression": "PV-B", "motsCles": ["prix d achat", "benefice", "prix de vente"], "explication": "On soustrait le bénéfice du prix de vente."}, {"id": "prix_revient", "categorie": "Commerce", "nom": "Prix de revient", "formule": "PR = PA + Frais", "variables": [{"code": "PA", "label": "prix d'achat"}, {"code": "Frais", "label": "frais"}], "resultat": {"code": "PR", "label": "prix de revient"}, "expression": "PA+Frais", "motsCles": ["prix de revient", "frais", "transport"], "explication": "On additionne le prix d'achat et tous les frais (transport, réparation...)."}, {"id": "salaire_total", "categorie": "Commerce", "nom": "Salaire total", "formule": "S = SJ × J", "variables": [{"code": "SJ", "label": "salaire par jour"}, {"code": "J", "label": "nombre de jours travaillés"}], "resultat": {"code": "S", "label": "salaire total"}, "expression": "SJ*J", "motsCles": ["salaire", "jours de travail", "travaille"], "explication": "On multiplie le salaire d'un jour par le nombre de jours travaillés."}, {"id": "jours_travailles", "categorie": "Commerce", "nom": "Jours travaillés (avec jours chômés)", "formule": "JT = JTotal − JChômés", "variables": [{"code": "JTotal", "label": "jours au total"}, {"code": "JChomes", "label": "jours chômés"}], "resultat": {"code": "JT", "label": "jours travaillés"}, "expression": "JTotal-JChomes", "motsCles": ["jours travailles", "jours chomes", "chome"], "explication": "On soustrait les jours chômés (non travaillés) du nombre total de jours."}, {"id": "partage_egal", "categorie": "Partage", "nom": "Partage égal", "formule": "Part = Total ÷ N", "variables": [{"code": "Total", "label": "quantité totale"}, {"code": "N", "label": "nombre de personnes"}], "resultat": {"code": "Part", "label": "part de chacun"}, "expression": "Total/N", "motsCles": ["partage egal", "partager également", "chacun", "repartir"], "explication": "On divise la quantité totale par le nombre de personnes : chacun reçoit la même part."}, {"id": "partage_inegal_petit", "categorie": "Partage", "nom": "Partage inégal — la plus petite part", "formule": "petite part = (Total − Différence) ÷ 2", "variables": [{"code": "Total", "label": "total à partager"}, {"code": "Difference", "label": "différence entre les deux parts"}], "resultat": {"code": "petite", "label": "la plus petite part"}, "expression": "(Total-Difference)/2", "motsCles": ["partage inegal", "plus que", "de moins", "difference"], "explication": "On soustrait la différence du total, puis on divise par 2 pour trouver la plus petite part."}, {"id": "partage_inegal_grand", "categorie": "Partage", "nom": "Partage inégal — la plus grande part", "formule": "grande part = (Total + Différence) ÷ 2", "variables": [{"code": "Total", "label": "total à partager"}, {"code": "Difference", "label": "différence entre les deux parts"}], "resultat": {"code": "grande", "label": "la plus grande part"}, "expression": "(Total+Difference)/2", "motsCles": ["partage inegal", "plus que", "de plus", "difference"], "explication": "On additionne la différence au total, puis on divise par 2 pour trouver la plus grande part."}, {"id": "vitesse", "categorie": "Autres", "nom": "Vitesse", "formule": "V = D ÷ T", "variables": [{"code": "D", "label": "distance"}, {"code": "T", "label": "temps"}], "resultat": {"code": "V", "label": "vitesse"}, "expression": "D/T", "motsCles": ["vitesse", "distance", "temps", "parcourt"], "explication": "On divise la distance parcourue par le temps mis."}, {"id": "distance", "categorie": "Autres", "nom": "Distance", "formule": "D = V × T", "variables": [{"code": "V", "label": "vitesse"}, {"code": "T", "label": "temps"}], "resultat": {"code": "D", "label": "distance"}, "expression": "V*T", "motsCles": ["distance", "vitesse", "temps"], "explication": "On multiplie la vitesse par le temps."}, {"id": "temps", "categorie": "Autres", "nom": "Temps", "formule": "T = D ÷ V", "variables": [{"code": "D", "label": "distance"}, {"code": "V", "label": "vitesse"}], "resultat": {"code": "T", "label": "temps"}, "expression": "D/V", "motsCles": ["temps", "distance", "vitesse"], "explication": "On divise la distance par la vitesse."}, {"id": "moyenne", "categorie": "Autres", "nom": "Moyenne", "formule": "M = Somme ÷ N", "variables": [{"code": "Somme", "label": "somme des valeurs"}, {"code": "N", "label": "nombre de valeurs"}], "resultat": {"code": "M", "label": "moyenne"}, "expression": "Somme/N", "motsCles": ["moyenne"], "explication": "On divise la somme de toutes les valeurs par le nombre de valeurs."}, {"id": "prix_total", "categorie": "Autres", "nom": "Prix total (achat de plusieurs objets)", "formule": "PT = PU × Q", "variables": [{"code": "PU", "label": "prix unitaire"}, {"code": "Q", "label": "quantité"}], "resultat": {"code": "PT", "label": "prix total"}, "expression": "PU*Q", "motsCles": ["prix total", "chaque", "prix unitaire", "cout"], "explication": "On multiplie le prix d'un seul objet par le nombre d'objets achetés."}];
+const GRAMMAIRE_DATA = [{"categorie": "Nature des mots", "titre": "Les 9 natures de mots", "contenu": "<p>Chaque mot de la langue française a une <strong>nature</strong> (on dit aussi une classe grammaticale) :</p><ul><li><strong>Nom</strong> : désigne une personne, un animal, une chose, une idée (Haïti, maison, joie).</li><li><strong>Déterminant</strong> : se place devant le nom (le, la, les, un, des, mon, ce...).</li><li><strong>Adjectif qualificatif</strong> : donne une qualité au nom (grand, beau, rouge).</li><li><strong>Pronom</strong> : remplace un nom (il, elle, celui-ci, qui, le mien).</li><li><strong>Verbe</strong> : exprime une action ou un état (manger, être, sembler).</li><li><strong>Adverbe</strong> : modifie un verbe, un adjectif ou un autre adverbe (vite, très, hier).</li><li><strong>Préposition</strong> : relie deux mots (à, de, sur, avec, pour).</li><li><strong>Conjonction</strong> : relie deux mots ou deux phrases (et, mais, ou, parce que).</li><li><strong>Interjection</strong> : exprime une émotion (Ah ! Hélas ! Bravo !).</li></ul>"}, {"categorie": "Fonctions", "titre": "Les fonctions dans la phrase", "contenu": "<p>Un mot occupe une <strong>fonction</strong> dans la phrase, selon son rôle :</p><ul><li><strong>Sujet</strong> : celui qui fait l'action (<em>Marie</em> chante).</li><li><strong>Complément d'objet direct (COD)</strong> : répond à \"quoi ?\" ou \"qui ?\" sans préposition (Marie chante <em>une chanson</em>).</li><li><strong>Complément d'objet indirect (COI)</strong> : répond à \"à quoi ?\", \"de quoi ?\" avec une préposition (Marie parle <em>à son frère</em>).</li><li><strong>Attribut du sujet</strong> : après un verbe d'état, il qualifie le sujet (Marie est <em>heureuse</em>).</li><li><strong>Complément circonstanciel</strong> : précise le lieu, le temps, la manière (Marie chante <em>le soir</em>, <em>dans la cour</em>).</li></ul>"}, {"categorie": "Accords", "titre": "Accord sujet-verbe", "contenu": "<p>Le verbe s'accorde toujours en <strong>personne</strong> et en <strong>nombre</strong> avec son sujet.</p><p>Exemples : <em>L'élève travaille</em> (singulier) → <em>Les élèves travaillent</em> (pluriel).</p><p>Attention aux sujets éloignés du verbe ou composés : <em>Le maître, avec ses élèves, arrive</em> (le sujet reste \"le maître\", au singulier).</p>"}, {"categorie": "Accords", "titre": "Accord de l'adjectif qualificatif", "contenu": "<p>L'adjectif s'accorde en <strong>genre</strong> (masculin/féminin) et en <strong>nombre</strong> (singulier/pluriel) avec le nom qu'il qualifie.</p><p>Exemples : un <em>grand</em> garçon → une <em>grande</em> fille → de <em>grands</em> garçons → de <em>grandes</em> filles.</p>"}, {"categorie": "Accords", "titre": "Accord du participe passé (cas de base)", "contenu": "<p>Avec l'auxiliaire <strong>être</strong> : le participe passé s'accorde avec le sujet (Elle est <em>partie</em>. Ils sont <em>arrivés</em>.)</p><p>Avec l'auxiliaire <strong>avoir</strong> : le participe passé ne s'accorde pas avec le sujet (Elle a <em>mangé</em>. Ils ont <em>chanté</em>.)</p>"}, {"categorie": "Pluriel", "titre": "Pluriel des noms", "contenu": "<p>La règle générale : on ajoute <strong>-s</strong> (un livre → des livres).</p><ul><li>Noms en <strong>-eau, -au, -eu</strong> → pluriel en <strong>-x</strong> (un bateau → des bateaux ; un jeu → des jeux).</li><li>Noms en <strong>-al</strong> → pluriel en <strong>-aux</strong> (un animal → des animaux). Exceptions : un bal, un carnaval, un festival → +s.</li><li>Noms déjà en <strong>-s, -x, -z</strong> → ne changent pas (une souris → des souris).</li></ul>"}, {"categorie": "Féminin", "titre": "Féminin des noms et adjectifs", "contenu": "<p>La règle générale : on ajoute <strong>-e</strong> (un ami → une amie ; grand → grande).</p><ul><li><strong>-er → -ère</strong> (boulanger → boulangère)</li><li><strong>-eux → -euse</strong> (heureux → heureuse)</li><li><strong>-f → -ve</strong> (neuf → neuve)</li><li><strong>-on, -en → -onne, -enne</strong> (bon → bonne ; ancien → ancienne)</li></ul>"}, {"categorie": "Conjugaison", "titre": "Les 3 groupes de verbes", "contenu": "<p><strong>1er groupe</strong> : verbes en <strong>-er</strong> (sauf aller) — parler, chanter, manger.</p><p><strong>2e groupe</strong> : verbes en <strong>-ir</strong> qui font <strong>-issons</strong> à \"nous\" — finir (nous finissons), choisir.</p><p><strong>3e groupe</strong> : tous les autres verbes (irréguliers) — aller, venir, prendre, faire, être, avoir, dire, voir...</p>"}, {"categorie": "Conjugaison", "titre": "Présent de l'indicatif", "contenu": "<p><strong>1er groupe</strong> (parler) : je parl<strong>e</strong>, tu parl<strong>es</strong>, il/elle parl<strong>e</strong>, nous parl<strong>ons</strong>, vous parl<strong>ez</strong>, ils/elles parl<strong>ent</strong>.</p><p><strong>2e groupe</strong> (finir) : je fin<strong>is</strong>, tu fin<strong>is</strong>, il fin<strong>it</strong>, nous fin<strong>issons</strong>, vous fin<strong>issez</strong>, ils fin<strong>issent</strong>.</p><p><strong>Être</strong> : je suis, tu es, il est, nous sommes, vous êtes, ils sont.</p><p><strong>Avoir</strong> : j'ai, tu as, il a, nous avons, vous avez, ils ont.</p>"}, {"categorie": "Conjugaison", "titre": "Futur simple", "contenu": "<p>Pour la plupart des verbes, on ajoute les terminaisons <strong>-ai, -as, -a, -ons, -ez, -ont</strong> à l'infinitif (ou à une base proche).</p><p><em>Parler</em> → je parler<strong>ai</strong>, tu parler<strong>as</strong>, il parler<strong>a</strong>...</p><p><em>Être</em> → je serai. <em>Avoir</em> → j'aurai. <em>Aller</em> → j'irai. <em>Faire</em> → je ferai.</p>"}, {"categorie": "Conjugaison", "titre": "Imparfait de l'indicatif", "contenu": "<p>Terminaisons pour tous les verbes : <strong>-ais, -ais, -ait, -ions, -iez, -aient</strong>.</p><p><em>Parler</em> → je parl<strong>ais</strong>, nous parl<strong>ions</strong>. <em>Finir</em> → je finiss<strong>ais</strong>.</p><p>On l'utilise pour une action passée qui dure ou se répète (Chaque matin, il <em>allait</em> à l'école).</p>"}, {"categorie": "Conjugaison", "titre": "Passé composé", "contenu": "<p>Le passé composé se forme avec <strong>avoir</strong> ou <strong>être</strong> au présent + le participe passé du verbe.</p><p>Exemples : j'<strong>ai mangé</strong>, elle <strong>est partie</strong>, nous <strong>avons fini</strong>.</p><p>La plupart des verbes se conjuguent avec avoir ; les verbes de mouvement (aller, venir, partir, arriver, entrer, sortir, monter, descendre, naître, mourir...) et les verbes pronominaux se conjuguent avec être.</p>"}, {"categorie": "Homophones", "titre": "Homophones grammaticaux courants", "contenu": "<ul><li><strong>a / à</strong> : \"a\" est le verbe avoir (il a) ; \"à\" est une préposition (il va à l'école). Astuce : remplace par \"avait\".</li><li><strong>on / ont</strong> : \"on\" est un pronom (on mange) ; \"ont\" est le verbe avoir (ils ont). Astuce : remplace par \"il\" ou \"avaient\".</li><li><strong>son / sont</strong> : \"son\" est un déterminant (son livre) ; \"sont\" est le verbe être (ils sont). Astuce : remplace par \"étaient\".</li><li><strong>ce / se</strong> : \"ce\" est un déterminant (ce livre) ; \"se\" est un pronom réfléchi (il se lave).</li><li><strong>ces / ses</strong> : \"ces\" désigne plusieurs choses (ces livres) ; \"ses\" indique la possession (ses livres à lui).</li><li><strong>et / est</strong> : \"et\" relie deux mots (pain et beurre) ; \"est\" est le verbe être (il est grand).</li><li><strong>la / l'a / là</strong> : \"la\" est un déterminant/pronom ; \"l'a\" est \"a\" avec \"l'\" (il l'a vu) ; \"là\" indique un lieu.</li></ul>"}, {"categorie": "Orthographe", "titre": "M devant M, B, P", "contenu": "<p>Devant les lettres <strong>m, b, p</strong>, on écrit <strong>m</strong> au lieu de <strong>n</strong>.</p><p>Exemples : e<strong>m</strong>mener, no<strong>m</strong>bre, ca<strong>m</strong>pagne, i<strong>m</strong>possible.</p><p>Exceptions à connaître : bonbon, néanmoins, embonpoint (cas particuliers).</p>"}, {"categorie": "Orthographe", "titre": "Pluriel des mots en -ou", "contenu": "<p>La plupart des noms en <strong>-ou</strong> prennent un <strong>-s</strong> au pluriel (un clou → des clous).</p><p>Sept exceptions prennent un <strong>-x</strong> : bijou, caillou, chou, genou, hibou, joujou, pou → des bijou<strong>x</strong>, des choux, des genoux...</p>"}, {"categorie": "Ponctuation", "titre": "Les signes de ponctuation", "contenu": "<ul><li><strong>. </strong>Le point termine une phrase déclarative.</li><li><strong>, </strong>La virgule sépare des éléments d'une liste ou une proposition.</li><li><strong>?</strong> Le point d'interrogation termine une question.</li><li><strong>!</strong> Le point d'exclamation exprime une émotion ou un ordre.</li><li><strong>:</strong> Les deux-points annoncent une explication, une citation ou une liste.</li><li><strong>« »</strong> Les guillemets encadrent une citation ou un dialogue.</li></ul>"}];
+const EXERCICES_BUILTIN = [{"categorie": "Grammaire", "question": "Dans la phrase « Le petit chat dort », quelle est la nature du mot « petit » ?", "options": ["Nom", "Adjectif qualificatif", "Verbe", "Adverbe"], "reponse": 1, "explication": "« Petit » donne une qualité au nom « chat » : c'est un adjectif qualificatif."}, {"categorie": "Grammaire", "question": "Dans « Marie mange une pomme », quelle est la fonction de « une pomme » ?", "options": ["Sujet", "Attribut", "Complément d'objet direct", "Complément circonstanciel"], "reponse": 2, "explication": "« Une pomme » répond à la question « mange quoi ? » sans préposition : c'est le COD."}, {"categorie": "Grammaire", "question": "Quel mot est un déterminant dans « la maison bleue » ?", "options": ["la", "maison", "bleue", "aucun"], "reponse": 0, "explication": "« La » se place devant le nom « maison » : c'est un déterminant."}, {"categorie": "Grammaire", "question": "« Rapidement » est un/une :", "options": ["Adjectif", "Adverbe", "Nom", "Préposition"], "reponse": 1, "explication": "« Rapidement » modifie un verbe ou une phrase : c'est un adverbe (souvent terminé en -ment)."}, {"categorie": "Grammaire", "question": "Dans « Il est fatigué », quelle est la fonction de « fatigué » ?", "options": ["COD", "COI", "Attribut du sujet", "Sujet"], "reponse": 2, "explication": "Après le verbe d'état « être », « fatigué » qualifie le sujet « il » : c'est l'attribut du sujet."}, {"categorie": "Grammaire", "question": "Quel mot est une préposition dans « Il va à l'école » ?", "options": ["Il", "va", "à", "l'école"], "reponse": 2, "explication": "« À » relie le verbe « va » et le complément « l'école »."}, {"categorie": "Grammaire", "question": "« Mais », « ou », « et » sont des :", "options": ["Prépositions", "Conjonctions", "Pronoms", "Interjections"], "reponse": 1, "explication": "Ces mots relient deux mots ou deux phrases : ce sont des conjonctions de coordination."}, {"categorie": "Grammaire", "question": "Dans « Les enfants jouent dans la cour », « les enfants » est :", "options": ["Complément", "Attribut", "Sujet", "COD"], "reponse": 2, "explication": "« Les enfants » fait l'action de jouer : c'est le sujet."}, {"categorie": "Conjugaison", "question": "Conjugue « finir » à la 1ère personne du pluriel, au présent :", "options": ["nous finissons", "nous finons", "nous finent", "nous finissez"], "reponse": 0, "explication": "Le verbe « finir » (2e groupe) fait « -issons » à la 1ère personne du pluriel : nous finissons."}, {"categorie": "Conjugaison", "question": "Quel est le participe passé du verbe « prendre » ?", "options": ["prendu", "pris", "prend", "pri"], "reponse": 1, "explication": "Le participe passé de « prendre » est « pris » (verbe irrégulier du 3e groupe)."}, {"categorie": "Conjugaison", "question": "« Ils ___ à l'école hier. » (aller, passé composé)", "options": ["ont allé", "sont allés", "ont été", "étaient allés"], "reponse": 1, "explication": "« Aller » est un verbe de mouvement : il se conjugue avec « être ». Ils sont allés."}, {"categorie": "Conjugaison", "question": "Complète : « Je ___ (parler) demain. » (futur simple)", "options": ["parle", "parlerai", "parlais", "parlerais"], "reponse": 1, "explication": "Au futur simple : je parler + ai = je parlerai."}, {"categorie": "Conjugaison", "question": "Quel est le verbe à l'infinitif de « elle finit » ?", "options": ["finir", "finer", "fini", "finire"], "reponse": 0, "explication": "« Finit » vient de l'infinitif « finir »."}, {"categorie": "Conjugaison", "question": "Conjugue « avoir » à la 3e personne du singulier, au présent :", "options": ["a", "as", "ont", "es"], "reponse": 0, "explication": "Avoir au présent : j'ai, tu as, il/elle a, nous avons, vous avez, ils/elles ont."}, {"categorie": "Conjugaison", "question": "« Chaque matin, il ___ (aller) au marché. » (imparfait)", "options": ["va", "allait", "ira", "est allé"], "reponse": 1, "explication": "Une action répétée dans le passé se met à l'imparfait : il allait."}, {"categorie": "Conjugaison", "question": "Quel groupe pour le verbe « manger » ?", "options": ["1er groupe", "2e groupe", "3e groupe", "aucun"], "reponse": 0, "explication": "« Manger » se termine en -er (et n'est pas « aller ») : c'est le 1er groupe."}, {"categorie": "Vocabulaire", "question": "Quel est le contraire de « grand » ?", "options": ["petit", "gros", "large", "haut"], "reponse": 0, "explication": "« Petit » est l'antonyme (le contraire) de « grand »."}, {"categorie": "Vocabulaire", "question": "Quel mot est un synonyme de « content » ?", "options": ["triste", "fâché", "heureux", "fatigué"], "reponse": 2, "explication": "« Heureux » a le même sens que « content »."}, {"categorie": "Vocabulaire", "question": "Comment appelle-t-on un mot qui a le même sens qu'un autre ?", "options": ["un antonyme", "un synonyme", "un homonyme", "un adjectif"], "reponse": 1, "explication": "Un synonyme est un mot de sens proche ou identique."}, {"categorie": "Vocabulaire", "question": "« Verre », « vert » et « vers » sont des :", "options": ["synonymes", "antonymes", "homonymes", "adjectifs"], "reponse": 2, "explication": "Ce sont des homonymes : ils se prononcent pareil mais ont des sens et souvent des orthographes différents."}, {"categorie": "Vocabulaire", "question": "Quel est le contraire de « monter » ?", "options": ["descendre", "tomber", "sauter", "courir"], "reponse": 0, "explication": "« Descendre » est le contraire de « monter »."}, {"categorie": "Vocabulaire", "question": "Un mot qui désigne une profession est un mot de quel champ lexical ?", "options": ["le temps", "les métiers", "les couleurs", "la famille"], "reponse": 1, "explication": "Boulanger, médecin, professeur appartiennent au champ lexical des métiers."}, {"categorie": "Vocabulaire", "question": "Quel est le radical du mot « injuste » ?", "options": ["in", "juste", "justement", "injust"], "reponse": 1, "explication": "« Juste » est le radical ; « in- » est le préfixe qui exprime le contraire."}, {"categorie": "Vocabulaire", "question": "Quel suffixe transforme « lent » en adverbe ?", "options": ["-ment", "-eur", "-tion", "-able"], "reponse": 0, "explication": "« Lentement » se forme avec le suffixe -ment, comme beaucoup d'adverbes."}, {"categorie": "Orthographe", "question": "« Il ___ (a/à) un beau vélo. »", "options": ["a", "à"], "reponse": 0, "explication": "On peut remplacer par « avait » : il avait un beau vélo. C'est donc « a » (le verbe avoir)."}, {"categorie": "Orthographe", "question": "« Elle va ___ (a/à) l'école. »", "options": ["a", "à"], "reponse": 1, "explication": "On ne peut pas dire « elle va avait l'école » : c'est donc « à » (la préposition)."}, {"categorie": "Orthographe", "question": "Complète : « ___ (on/ont) mange bien ici. »", "options": ["on", "ont"], "reponse": 0, "explication": "On peut remplacer par « il » : il mange bien ici. C'est donc « on »."}, {"categorie": "Orthographe", "question": "Comment écrit-on le pluriel de « bateau » ?", "options": ["bateaus", "bateaux", "bateaues", "bateau"], "reponse": 1, "explication": "Les noms en -eau prennent un -x au pluriel : des bateaux."}, {"categorie": "Orthographe", "question": "Quelle est la bonne orthographe ?", "options": ["imbossible", "inpossible", "impossible", "imppossible"], "reponse": 2, "explication": "Devant p, on écrit m et non n : impossible."}, {"categorie": "Orthographe", "question": "Quel est le pluriel de « animal » ?", "options": ["animals", "animales", "animaux", "animaus"], "reponse": 2, "explication": "Les noms en -al font leur pluriel en -aux : des animaux."}, {"categorie": "Orthographe", "question": "Choisis la bonne phrase :", "options": ["Ces enfants jouent avec ses ballons.", "Ses enfants jouent avec ces ballons.", "Ces enfant joue avec ses ballon.", "Ses enfant jouent avec ces ballon."], "reponse": 0, "explication": "« Ces » (pluriel de « ce ») désigne les enfants ; « ses » indique la possession pour les ballons."}, {"categorie": "Orthographe", "question": "Quelle est la bonne orthographe du féminin de « heureux » ?", "options": ["heureuse", "heureuxe", "heureux", "heureuze"], "reponse": 0, "explication": "Les adjectifs en -eux font leur féminin en -euse : heureuse."}];
+const GEO = [{"titre": "La Terre", "contenu": "<p>La <strong>Terre</strong> est la planète que nous habitons. C'est la troisième planète du système solaire en partant du Soleil. Elle a la forme d'une sphère légèrement aplatie aux pôles (on dit qu'elle est <em>géoïde</em>).</p><p>La Terre effectue deux mouvements principaux :</p><ul><li>La <strong>rotation</strong> : elle tourne sur elle-même en 24 heures, ce qui donne le jour et la nuit.</li><li>La <strong>révolution</strong> : elle tourne autour du Soleil en 365 jours (1 an), ce qui donne les saisons.</li></ul><p>La Terre est formée de plusieurs éléments : la <strong>lithosphère</strong> (la partie solide, les roches), l'<strong>hydrosphère</strong> (l'eau), l'<strong>atmosphère</strong> (l'air) et la <strong>biosphère</strong> (les êtres vivants).</p>"}, {"titre": "L'eau à la surface de la terre", "contenu": "<p>L'eau recouvre environ <strong>les trois quarts (¾)</strong> de la surface de la Terre. On distingue :</p><ul><li><strong>Les océans</strong> : les plus grandes étendues d'eau salée (Pacifique, Atlantique, Indien, Arctique, Austral).</li><li><strong>Les mers</strong> : des étendues d'eau salée plus petites, souvent bordées de terres (mer des Caraïbes, mer Méditerranée).</li><li><strong>Les fleuves et rivières</strong> : cours d'eau douce qui se jettent dans la mer (fleuve) ou dans un autre cours d'eau (rivière).</li><li><strong>Les lacs</strong> : étendues d'eau douce entourées de terre.</li></ul><p>L'eau circule sans arrêt grâce au <strong>cycle de l'eau</strong> : évaporation (l'eau devient vapeur sous l'effet du soleil), condensation (formation des nuages), précipitation (pluie), puis ruissellement vers les rivières et la mer.</p>"}, {"titre": "La terre et son relief", "contenu": "<p>Le <strong>relief</strong> désigne les différentes formes que prend la surface de la Terre. Les principales formes de relief sont :</p><ul><li><strong>La montagne</strong> : un relief élevé, avec des pentes marquées et un sommet.</li><li><strong>La plaine</strong> : une étendue de terre plate ou presque plate, à basse altitude.</li><li><strong>Le plateau</strong> : une étendue plate mais en altitude, souvent bordée de pentes abruptes.</li><li><strong>La colline</strong> : une élévation de terrain, moins haute et moins abrupte qu'une montagne.</li><li><strong>La vallée</strong> : une dépression allongée entre deux hauteurs, souvent creusée par une rivière.</li></ul><p>Le relief influence le climat, la végétation, l'agriculture et l'installation des populations.</p>"}, {"titre": "Climats et végétation de la terre", "contenu": "<p>Le <strong>climat</strong> est l'ensemble des conditions atmosphériques (température, pluie, vent) qui caractérisent une région sur une longue période. On distingue de grandes zones climatiques :</p><ul><li><strong>Le climat équatorial</strong> : chaud et humide toute l'année → forêt dense (forêt équatoriale).</li><li><strong>Le climat tropical</strong> : chaud, avec une saison sèche et une saison des pluies → savane.</li><li><strong>Le climat désertique</strong> : très chaud le jour, peu de pluie → végétation rare (cactus, épineux).</li><li><strong>Le climat tempéré</strong> : quatre saisons marquées → forêts et prairies.</li><li><strong>Le climat polaire</strong> : très froid toute l'année → peu de végétation (mousses, lichens).</li></ul><p>Haïti se trouve dans la <strong>zone tropicale</strong> : climat chaud, avec une saison sèche et une saison des pluies.</p>"}, {"titre": "La Caraïbe", "contenu": "<p>La <strong>Caraïbe</strong> (ou mer des Antilles) est une mer de l'océan Atlantique, située entre l'Amérique du Nord, l'Amérique du Sud et l'Amérique centrale.</p><p>Elle est bordée par de nombreuses îles appelées les <strong>Antilles</strong>, ainsi que par des pays d'Amérique centrale et d'Amérique du Sud (Mexique, Colombie, Venezuela...).</p><p>Le climat de la Caraïbe est <strong>tropical</strong> : chaud toute l'année, avec une saison cyclonique (juin à novembre). C'est une région très touristique, connue pour ses plages et sa biodiversité marine, mais aussi exposée aux ouragans.</p>"}, {"titre": "À la découverte d'Haïti", "contenu": "<p><strong>Haïti</strong> (nom officiel : République d'Haïti) occupe le tiers occidental de l'île d'<strong>Hispaniola</strong>, qu'elle partage avec la République dominicaine, à l'est.</p><ul><li><strong>Capitale</strong> : Port-au-Prince</li><li><strong>Superficie</strong> : environ 27 750 km²</li><li><strong>Langues officielles</strong> : le français et le créole haïtien</li><li><strong>Monnaie</strong> : la gourde</li><li><strong>Situation</strong> : bordée par l'océan Atlantique au nord et la mer des Caraïbes au sud, à l'ouest de la République dominicaine</li></ul><p>Haïti fut la première république noire indépendante du monde, en <strong>1804</strong>.</p>"}, {"titre": "Population et développement", "contenu": "<p>Haïti compte aujourd'hui un peu plus de <strong>12 millions d'habitants</strong>, ce qui en fait l'un des pays les plus peuplés de la Caraïbe.</p><p>La population est en majorité <strong>jeune</strong> (l'âge médian est d'environ 24 ans) et de plus en plus <strong>urbaine</strong> : plus de 6 personnes sur 10 vivent aujourd'hui en ville, notamment dans la région de Port-au-Prince.</p><p>Le <strong>développement</strong> d'un pays se mesure à travers plusieurs éléments : l'accès à l'éducation, à la santé, à l'eau potable, à l'électricité, et le niveau de vie de la population. Un pays en développement cherche à améliorer ces conditions de vie pour tous ses habitants.</p>"}, {"titre": "L'espace terrestre habité", "contenu": "<p>L'espace habité par les humains sur Terre s'appelle l'<strong>écoumène</strong>. Les régions les plus peuplées se trouvent généralement dans les plaines, les vallées et le long des côtes, là où l'eau, les terres fertiles et les activités économiques sont accessibles.</p><p>On distingue deux grands types d'habitat :</p><ul><li><strong>L'habitat rural</strong> : dans les campagnes, souvent lié à l'agriculture, avec un habitat dispersé ou en petits villages.</li><li><strong>L'habitat urbain</strong> : dans les villes, avec une forte concentration de population, d'immeubles et d'activités.</li></ul><p>Certaines zones de la Terre sont peu ou pas habitées : les grands déserts, les hautes montagnes, les régions polaires.</p>"}, {"titre": "Le cadre de vie", "contenu": "<p>Le <strong>cadre de vie</strong> désigne l'ensemble des éléments (naturels et construits par l'homme) qui entourent une personne dans son quotidien : le logement, le quartier, les routes, l'eau, l'électricité, les écoles, les espaces verts.</p><p>Un bon cadre de vie comprend :</p><ul><li>Un logement solide et sain</li><li>L'accès à l'eau potable et à l'électricité</li><li>Des écoles et des centres de santé proches</li><li>Un environnement propre, avec une bonne gestion des déchets</li></ul><p>Améliorer le cadre de vie est un enjeu important du développement, en ville comme à la campagne.</p>"}, {"titre": "Les îles de la Caraïbe", "contenu": "<p>Les îles de la Caraïbe se répartissent en deux grands groupes :</p><ul><li><strong>Les Grandes Antilles</strong> : les plus grandes îles — Cuba, Hispaniola (Haïti et République dominicaine), la Jamaïque, Porto Rico.</li><li><strong>Les Petites Antilles</strong> : un chapelet de petites îles qui s'étend plus au sud et à l'est — la Guadeloupe, la Martinique, la Dominique, Sainte-Lucie, la Barbade, Trinité-et-Tobago, et bien d'autres.</li></ul><p>Ces îles partagent souvent une histoire liée à la colonisation européenne, une population d'origine africaine majoritaire, et une économie fondée sur l'agriculture (canne à sucre, banane, café) et le tourisme.</p>"}, {"titre": "Mieux connaître Haïti", "contenu": "<p>Haïti est divisée en <strong>10 départements</strong> : Ouest, Sud-Est, Nord, Nord-Est, Artibonite, Centre, Sud, Grand'Anse, Nord-Ouest et Nippes.</p><p>Le relief d'Haïti est très <strong>montagneux</strong> (le nom \"Haïti\" signifie d'ailleurs \"pays de hautes montagnes\" en langue taïno). Les principales chaînes sont le Massif de la Selle, le Massif de la Hotte, la Chaîne des Matheux, les Montagnes Noires et le Massif du Nord. Le plus haut sommet est le <strong>Pic la Selle</strong>, à environ 2 680 mètres.</p><p>Le climat est <strong>tropical</strong>, avec une saison sèche et une saison des pluies, et une exposition aux cyclones entre juin et novembre. L'économie repose notamment sur l'agriculture, le commerce et les envois de fonds de la diaspora.</p>"}];
+const SCIENCES = [{"titre": "Le corps humain", "contenu": "<p>Le corps humain est organisé en plusieurs parties et fonctions :</p><ul><li><strong>Le squelette</strong> : l'ensemble des os qui soutiennent le corps et protègent les organes (environ 206 os chez l'adulte).</li><li><strong>Les muscles</strong> : ils permettent de bouger le corps.</li><li><strong>Les 5 sens</strong> : la vue (les yeux), l'ouïe (les oreilles), l'odorat (le nez), le goût (la langue), le toucher (la peau).</li></ul><p>Les grandes fonctions du corps :</p><ul><li><strong>La respiration</strong> : les poumons font entrer l'oxygène de l'air et rejettent le gaz carbonique.</li><li><strong>La digestion</strong> : l'estomac et les intestins transforment les aliments pour nourrir le corps.</li><li><strong>La circulation</strong> : le cœur pompe le sang dans tout le corps grâce aux vaisseaux sanguins.</li></ul>"}, {"titre": "Les plantes", "contenu": "<p>Une plante est composée de plusieurs parties, chacune avec un rôle précis :</p><ul><li><strong>La racine</strong> : fixe la plante au sol et absorbe l'eau et les sels minéraux.</li><li><strong>La tige</strong> : soutient la plante et transporte la sève.</li><li><strong>Les feuilles</strong> : captent la lumière du soleil pour fabriquer la nourriture de la plante (c'est la <strong>photosynthèse</strong>) ; elles rejettent aussi de l'oxygène.</li><li><strong>La fleur</strong> : permet la reproduction de la plante ; elle donne ensuite un fruit contenant des graines.</li></ul><p>Pour vivre, une plante a besoin de lumière, d'eau, d'air et d'un sol nourrissant.</p>"}, {"titre": "Les états de la matière", "contenu": "<p>La matière peut exister sous <strong>trois états</strong> :</p><ul><li><strong>Solide</strong> : a une forme propre (une pierre, un glaçon, du bois).</li><li><strong>Liquide</strong> : coule et prend la forme de son contenant (l'eau, l'huile).</li><li><strong>Gazeux</strong> : n'a pas de forme propre et se répand dans tout l'espace disponible (l'air, la vapeur d'eau).</li></ul><p>La matière peut changer d'état sous l'effet de la chaleur ou du froid :</p><ul><li><strong>Fusion</strong> : solide → liquide (la glace fond).</li><li><strong>Solidification</strong> : liquide → solide (l'eau gèle).</li><li><strong>Évaporation</strong> : liquide → gaz (l'eau chauffée devient vapeur).</li><li><strong>Condensation</strong> : gaz → liquide (la vapeur redevient eau sur une vitre froide).</li></ul>"}, {"titre": "Les animaux", "contenu": "<p>On classe les animaux en grandes familles :</p><ul><li><strong>Les mammifères</strong> : ont des poils et allaitent leurs petits (chien, vache, homme).</li><li><strong>Les oiseaux</strong> : ont des plumes et pondent des œufs (poule, colibri).</li><li><strong>Les poissons</strong> : vivent dans l'eau et respirent par des branchies (thon, tilapia).</li><li><strong>Les reptiles</strong> : ont des écailles (lézard, serpent, tortue).</li><li><strong>Les insectes</strong> : ont 6 pattes et souvent des ailes (fourmi, papillon, moustique).</li></ul><p>Selon leur alimentation, on distingue aussi les <strong>herbivores</strong> (mangent des plantes), les <strong>carnivores</strong> (mangent de la viande) et les <strong>omnivores</strong> (mangent de tout).</p>"}, {"titre": "Hygiène et santé", "contenu": "<p>L'hygiène regroupe les gestes qui permettent de rester en bonne santé :</p><ul><li>Se laver le corps chaque jour et se brosser les dents après les repas.</li><li>Se laver les mains avant de manger et après être allé aux toilettes.</li><li>Boire de l'eau propre (bouillie ou traitée) et laver les fruits et légumes.</li><li>Dormir suffisamment et manger des aliments variés (fruits, légumes, protéines).</li><li>Faire de l'exercice physique régulièrement.</li></ul><p>Une bonne hygiène permet d'éviter de nombreuses maladies, notamment les maladies transmises par l'eau sale ou les mains non lavées.</p>"}];
+const DICTEES = [{"id": "matin", "titre": "Le matin", "niveau": "Facile", "texte": "Chaque matin, je me lève tôt. Je me lave, je m'habille et je prends mon petit-déjeuner. Ensuite, je pars pour l'école avec mon sac sur le dos."}, {"id": "recreation", "titre": "La récréation", "niveau": "Facile", "texte": "À la récréation, les élèves sortent dans la cour. Certains jouent au ballon, d'autres discutent sous les arbres. La cloche sonne et tout le monde retourne en classe."}, {"id": "village", "titre": "Mon village", "niveau": "Moyen", "texte": "Mon village est situé près des montagnes. Les maisons sont petites mais bien entretenues. Le matin, les paysans partent travailler dans les champs avec leurs outils."}, {"id": "pluie", "titre": "La pluie", "niveau": "Moyen", "texte": "De gros nuages noirs couvrent le ciel. Bientôt, la pluie commence à tomber sur les toits. Les enfants courent se mettre à l'abri pendant que l'eau ruisselle dans les rues."}, {"id": "marche", "titre": "Le marché", "niveau": "Moyen", "texte": "Le samedi, ma mère va au marché pour acheter des légumes frais, du riz et des fruits. Les marchandes appellent les clients et négocient les prix avec le sourire."}, {"id": "rentree", "titre": "La rentrée des classes", "niveau": "Moyen", "texte": "Aujourd'hui, c'est la rentrée des classes. Les élèves portent fièrement leur nouvel uniforme. Le directeur souhaite la bienvenue à tous devant la cour de l'école."}, {"id": "haiti", "titre": "Haïti, mon pays", "niveau": "Difficile", "texte": "Haïti est un pays montagneux situé dans la mer des Caraïbes. Sa capitale, Port-au-Prince, est une ville animée. Le pays possède une riche histoire, marquée par la lutte pour l'indépendance en mille huit cent quatre."}, {"id": "mer-caraibe", "titre": "La mer des Caraïbes", "niveau": "Difficile", "texte": "La mer des Caraïbes baigne de nombreuses îles aux paysages magnifiques. Les pêcheurs y trouvent chaque jour du poisson frais, tandis que les touristes admirent la beauté des plages ensoleillées."}];
 
-<section id="speed" class="panel">
-<button class="btn secondary back" onclick="show('#home')">← Accueil</button>
-<div class="card"><h2>🚗 Vitesse, distance, temps</h2>
-<form id="speedForm">
-<label>Valeur 1<input id="sd" inputmode="decimal" placeholder="distance si tu cherches V ou T"></label>
-<label>Valeur 2<input id="st" inputmode="decimal" placeholder="temps si tu cherches V"></label>
-<label>Grandeur recherchée<select id="swhat"><option value="v">Vitesse</option><option value="d">Distance</option><option value="t">Temps</option></select></label>
-<button class="btn">Résoudre</button>
-</form><div id="speedResult" class="result"></div>
-<p class="small">Dans cette V1, les unités doivent être cohérentes (par exemple km et h).</p>
-</div></section>
+(function () {
+  "use strict";
 
-<section id="commerce" class="panel">
-<button class="btn secondary back" onclick="show('#home')">← Accueil</button>
-<div class="card"><h2>💰 Prix, bénéfice et perte</h2>
-<form id="commerceForm">
-<label>Prix d'achat unitaire<input id="pa" inputmode="decimal"></label>
-<label>Prix de vente unitaire<input id="pv" inputmode="decimal"></label>
-<label>Nombre d'articles<input id="qty" inputmode="numeric" value="1"></label>
-<button class="btn">Calculer</button>
-</form><div id="commerceResult" class="result"></div>
-<p class="small">La V1 prépare aussi l'ajout des problèmes de prix de revient et de jours de travail/chômés.</p>
-</div></section>
+  /* ================= Navigation ================= */
+  const tabButtons = document.querySelectorAll("nav.tabs button");
+  const views = document.querySelectorAll("section.view");
+  function showView(name) {
+    views.forEach((v) => v.classList.toggle("active", v.id === "view-" + name));
+    tabButtons.forEach((b) => b.classList.toggle("active", b.dataset.view === name));
+  }
+  tabButtons.forEach((btn) => btn.addEventListener("click", () => showView(btn.dataset.view)));
 
-<section id="mean" class="panel">
-<button class="btn secondary back" onclick="show('#home')">← Accueil</button>
-<div class="card"><h2>📊 Moyenne</h2>
-<form id="meanForm"><label>Nombres (séparés par espaces ou virgules)<input id="meanVals" placeholder="12, 15, 13, 10"></label><button class="btn">Calculer</button></form>
-<div id="meanResult" class="result"></div>
-</div></section>
+  function normalize(str) {
+    return (str || "").toString().toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9\s]/g, " ");
+  }
 
-<section id="french" class="panel">
-<button class="btn secondary back" onclick="show('#home')">← Accueil</button>
-<div class="card"><h2>📚 Français</h2><span class="chip" id="exerciseType">Grammaire</span>
-<p id="exerciseQuestion"></p>
-<label>Ta réponse<input id="exerciseAnswer"></label>
-<div class="row"><button class="btn" id="checkExercise">Corriger</button><button class="btn secondary" id="nextExercise">Exercice suivant</button></div>
-<div id="exerciseFeedback" class="result"></div>
-</div>
-<div class="card"><h3>Domaines prévus</h3><div><span class="chip">Grammaire</span><span class="chip">Conjugaison</span><span class="chip">Vocabulaire</span><span class="chip">Orthographe</span><span class="chip">Dictée</span><span class="chip">Accords</span></div></div>
-</section>
+  function fmtNum(n) {
+    if (isNaN(n)) return "—";
+    const r = Math.round(n * 1000) / 1000;
+    return r.toString().replace(".", ",");
+  }
 
-<section id="letter" class="panel">
-<button class="btn secondary back" onclick="show('#home')">← Accueil</button>
-<div class="card"><h2>✉️ Rédiger une lettre</h2>
-<form id="letterForm">
-<label>Destinataire<input id="ldest" placeholder="Monsieur le Directeur"></label>
-<label>Objet<input id="lsubject" placeholder="Demande"></label>
-<label>Nom du signataire<input id="lname"></label>
-<label>Contenu / demande<textarea id="lbody" placeholder="Explique ce que tu veux dire..."></textarea></label>
-<button class="btn">Rédiger la lettre</button>
-</form></div>
-<div class="card"><h3>Résultat</h3><div id="letterOut" class="letter">Ta lettre apparaîtra ici.</div></div>
-</section>
+  /* ================= Évaluateur d'expression sécurisé ================= */
+  function safeEval(expr) {
+    const cleaned = expr.replace(/,/g, ".");
+    if (!/^[0-9+\-*/().\s]+$/.test(cleaned)) throw new Error("Caractères non autorisés");
+    // eslint-disable-next-line no-new-func
+    return Function('"use strict"; return (' + cleaned + ")")();
+  }
 
-<section id="advanced" class="panel"><button class="btn secondary back" onclick="show('#home')">← Accueil</button><div class="card"><h2>🧩 Problèmes avancés</h2><p>Choisis un type de problème et entre les données. La solution est construite étape par étape, sans IA.</p><label>Type<select id="advType"><option value="shareEqual">Partage égal</option><option value="shareRatio">Partage proportionnel</option><option value="cost">Prix de revient</option><option value="workdays">Jours de travail</option><option value="compound">Problème composé</option><option value="discount">Remise / augmentation</option></select></label><div id="advFields"></div><button class="btn" id="advSolve">Résoudre</button></div><div id="advResult" class="result">La solution détaillée apparaîtra ici.</div></section>
-<section id="convert" class="panel"><button class="btn secondary back" onclick="show('#home')">← Accueil</button><div class="card"><h2>📏 Convertisseur</h2><label>Valeur<input id="cvValue" inputmode="decimal" placeholder="10"></label><label>De<select id="cvFrom"><option>m</option><option>cm</option><option>km</option><option>kg</option><option>g</option><option>L</option><option>mL</option><option>h</option><option>min</option><option>s</option></select></label><label>Vers<select id="cvTo"><option>cm</option><option>m</option><option>km</option><option>g</option><option>kg</option><option>mL</option><option>L</option><option>s</option><option>min</option><option>h</option></select></label><button class="btn" id="cvGo">Convertir</button></div><div id="cvResult" class="result"></div></section>
-<section id="training" class="panel"><button class="btn secondary back" onclick="show('#home')">← Accueil</button><div class="card"><h2>🧠 Entraînement intelligent</h2><p>Des exercices sont générés localement à partir de règles mathématiques.</p><div class="chip">Score : <span id="score">0</span></div><div class="chip">Question : <span id="qnum">1</span></div><h3 id="trainQuestion"></h3><label>Réponse<input id="trainAnswer" inputmode="decimal"></label><div class="row"><button class="btn" id="trainCheck">Corriger</button><button class="btn secondary" id="trainNext">Nouvel exercice</button></div><div id="trainFeedback" class="result"></div></div></section>
-<section id="formulas" class="panel">
-<button class="btn secondary back" onclick="show('#home')">← Accueil</button>
-<div class="card"><h2>📖 Formules de référence</h2>
-<ul>
-<li><b>Rectangle :</b> P = 2 × (L + l), A = L × l</li>
-<li><b>Carré :</b> P = 4 × c, A = c × c</li>
-<li><b>Triangle :</b> P = a + b + c, A = (base × hauteur) ÷ 2</li>
-<li><b>Parallélogramme :</b> P = 2 × (a + b), A = base × hauteur</li>
-<li><b>Losange :</b> P = 4 × c, A = (D × d) ÷ 2</li>
-<li><b>Trapèze :</b> P = a + b + c + d, A = ((B + b) × h) ÷ 2</li>
-<li><b>Vitesse :</b> V = D ÷ T</li>
-<li><b>Distance :</b> D = V × T</li>
-<li><b>Temps :</b> T = D ÷ V</li>
-<li><b>Moyenne :</b> somme des valeurs ÷ nombre de valeurs</li>
-</ul>
-</div></section>
-</main>
+  /* ================= Calculatrice simple ================= */
+  let currentOp = "+";
+  document.querySelectorAll("#view-calculer .op-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#view-calculer .op-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentOp = btn.dataset.op;
+    });
+  });
+  const opWords = { "+": "l'addition", "-": "la soustraction", "*": "la multiplication", "/": "la division" };
+  const opSymbols = { "+": "+", "-": "−", "*": "×", "/": "÷" };
+  document.getElementById("calc-run").addEventListener("click", () => {
+    const a = parseFloat(document.getElementById("c-a").value);
+    const b = parseFloat(document.getElementById("c-b").value);
+    const box = document.getElementById("calc-result");
+    if (isNaN(a) || isNaN(b)) { alert("Entre deux nombres."); return; }
+    if (currentOp === "/" && b === 0) { alert("Division par zéro impossible."); return; }
+    let res;
+    if (currentOp === "+") res = a + b;
+    else if (currentOp === "-") res = a - b;
+    else if (currentOp === "*") res = a * b;
+    else res = a / b;
+    box.style.display = "block";
+    document.getElementById("calc-value").textContent = fmtNum(a) + " " + opSymbols[currentOp] + " " + fmtNum(b) + " = " + fmtNum(res);
+    document.getElementById("calc-steps").textContent = "On effectue " + opWords[currentOp] + " de " + fmtNum(a) + " et " + fmtNum(b) + ".";
+  });
 
-<nav class="bottom"><button onclick="show('#home')">Accueil</button><button onclick="show('#calc')">Calcul</button><button onclick="show('#geo')">Géométrie</button><button onclick="show('#french')">Français</button></nav>
-<script src="./app.js"></script>
+  document.getElementById("expr-run").addEventListener("click", () => {
+    const expr = document.getElementById("expr-input").value.trim();
+    const box = document.getElementById("expr-result");
+    if (!expr) return;
+    try {
+      const res = safeEval(expr);
+      box.style.display = "block";
+      document.getElementById("expr-value").textContent = expr + " = " + fmtNum(res);
+    } catch (e) {
+      box.style.display = "block";
+      document.getElementById("expr-value").textContent = "Expression invalide.";
+    }
+  });
+
+  /* ================= Formules ================= */
+  const formuleCatsEl = document.getElementById("formule-cats");
+  const formuleListEl = document.getElementById("formule-list");
+  const formuleCats = [...new Set(FORMULES.map((f) => f.categorie))];
+  let currentFormuleCat = "Tous";
+
+  function renderFormuleCats() {
+    formuleCatsEl.innerHTML = "";
+    ["Tous", ...formuleCats].forEach((cat) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = cat;
+      b.className = cat === currentFormuleCat ? "active" : "";
+      b.addEventListener("click", () => {
+        currentFormuleCat = cat;
+        renderFormuleCats();
+        renderFormuleList();
+      });
+      formuleCatsEl.appendChild(b);
+    });
+  }
+
+  function renderFormuleList() {
+    document.getElementById("partage-prop-card").style.display =
+      (currentFormuleCat === "Tous" || currentFormuleCat === "Partage") ? "block" : "none";
+    formuleListEl.innerHTML = "";
+    FORMULES.filter((f) => currentFormuleCat === "Tous" || f.categorie === currentFormuleCat).forEach((f) => {
+      const card = document.createElement("div");
+      card.className = "formula-card";
+      card.innerHTML = `<div class="f-nom">${f.nom}</div><div class="f-formule">${f.formule}</div><div class="f-explication">${f.explication}</div>`;
+      formuleListEl.appendChild(card);
+    });
+  }
+
+  renderFormuleCats();
+  renderFormuleList();
+
+  /* ---- Partage proportionnel ---- */
+  document.getElementById("pp-run").addEventListener("click", () => {
+    const total = parseFloat(document.getElementById("pp-total").value);
+    const partsRaw = document.getElementById("pp-parts").value;
+    const parts = partsRaw.split(",").map((x) => parseFloat(x.trim())).filter((x) => !isNaN(x) && x > 0);
+    const box = document.getElementById("pp-result");
+    if (isNaN(total) || parts.length < 2) { alert("Entre un total et au moins 2 parts (ex : 2, 3, 4)."); return; }
+    const sommeParts = parts.reduce((a, b) => a + b, 0);
+    const unite = total / sommeParts;
+    const resultats = parts.map((p) => p * unite);
+    box.style.display = "block";
+    document.getElementById("pp-value").textContent = resultats.map(fmtNum).join(" | ");
+    document.getElementById("pp-steps").textContent =
+      "On additionne les parts : " + parts.join(" + ") + " = " + sommeParts + ".\n" +
+      "On divise le total par cette somme : " + fmtNum(total) + " ÷ " + sommeParts + " = " + fmtNum(unite) + " (valeur d'une part).\n" +
+      "On multiplie chaque part par cette valeur : " + parts.map((p, i) => p + " × " + fmtNum(unite) + " = " + fmtNum(resultats[i])).join(" ; ");
+  });
+
+  /* ================= Résoudre (moteur mots-clés) ================= */
+  let selectedFormule = null;
+  const smChoice = document.getElementById("sm-choice");
+  FORMULES.forEach((f) => {
+    const opt = document.createElement("option");
+    opt.value = f.id;
+    opt.textContent = f.categorie + " — " + f.nom;
+    smChoice.appendChild(opt);
+  });
+
+  function extractNumbers(text) {
+    const matches = text.match(/\d+(?:[.,]\d+)?/g) || [];
+    return matches.map((m) => parseFloat(m.replace(",", ".")));
+  }
+
+  function scoreFormule(f, normText) {
+    let score = 0;
+    f.motsCles.forEach((mc) => {
+      if (normText.includes(normalize(mc))) score++;
+    });
+    return score;
+  }
+
+  function pickBestFormule(text) {
+    const normText = normalize(text);
+    let best = null, bestScore = 0;
+    FORMULES.forEach((f) => {
+      const s = scoreFormule(f, normText);
+      if (s > bestScore) { bestScore = s; best = f; }
+    });
+    return bestScore > 0 ? best : null;
+  }
+
+  function showFormuleVars(f, numbers) {
+    selectedFormule = f;
+    document.getElementById("sm-title").textContent = f.nom + "  (" + f.formule + ")";
+    smChoice.value = f.id;
+    const varsEl = document.getElementById("sm-vars");
+    varsEl.innerHTML = "";
+    f.variables.forEach((v, i) => {
+      const row = document.createElement("div");
+      row.className = "var-assign-row";
+      const val = numbers[i] !== undefined ? numbers[i] : "";
+      row.innerHTML = `<label>${v.label} (${v.code})</label><input type="number" data-code="${v.code}" value="${val}">`;
+      varsEl.appendChild(row);
+    });
+    document.getElementById("solver-match").style.display = "block";
+    document.getElementById("sm-result").style.display = "none";
+  }
+
+  document.getElementById("solve-analyse").addEventListener("click", () => {
+    const text = document.getElementById("solve-input").value.trim();
+    if (!text) { alert("Écris ou colle d'abord un problème."); return; }
+    const numbers = extractNumbers(text);
+    const best = pickBestFormule(text);
+    if (!best) {
+      alert("Aucune formule reconnue automatiquement. Choisis-en une manuellement dans la liste qui apparaît.");
+      showFormuleVars(FORMULES[0], numbers);
+      return;
+    }
+    showFormuleVars(best, numbers);
+  });
+
+  smChoice.addEventListener("change", () => {
+    const f = FORMULES.find((x) => x.id === smChoice.value);
+    const numbers = extractNumbers(document.getElementById("solve-input").value);
+    showFormuleVars(f, numbers);
+  });
+
+  document.getElementById("sm-resoudre").addEventListener("click", () => {
+    if (!selectedFormule) return;
+    const inputs = document.querySelectorAll("#sm-vars input");
+    const values = {};
+    let ok = true;
+    inputs.forEach((inp) => {
+      const v = parseFloat(inp.value);
+      if (isNaN(v)) ok = false;
+      values[inp.dataset.code] = v;
+    });
+    if (!ok) { alert("Remplis toutes les valeurs."); return; }
+    let result;
+    try {
+      result = Function(...Object.keys(values), "return (" + selectedFormule.expression + ");")(...Object.values(values));
+    } catch (e) {
+      alert("Erreur de calcul.");
+      return;
+    }
+    const box = document.getElementById("sm-result");
+    box.style.display = "block";
+    document.getElementById("sm-value").textContent = selectedFormule.resultat.label + " = " + fmtNum(result);
+    const detail = selectedFormule.variables.map((v) => v.label + " = " + fmtNum(values[v.code])).join(", ");
+    document.getElementById("sm-steps").textContent =
+      "Données : " + detail + ".\n" + selectedFormule.explication + "\n" +
+      selectedFormule.formule + "  →  " + selectedFormule.resultat.code + " = " + fmtNum(result);
+  });
+
+  /* ================= Fractions ================= */
+  function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a || 1; }
+  function lcm(a, b) { return Math.abs(a * b) / gcd(a, b); }
+  function simplifyFrac(n, d) {
+    if (d < 0) { n = -n; d = -d; }
+    const g = gcd(n, d);
+    return [n / g, d / g];
+  }
+
+  document.getElementById("fr-run").addEventListener("click", () => {
+    const n1 = parseInt(document.getElementById("fr-n1").value, 10);
+    const d1 = parseInt(document.getElementById("fr-d1").value, 10);
+    const n2 = parseInt(document.getElementById("fr-n2").value, 10);
+    const d2 = parseInt(document.getElementById("fr-d2").value, 10);
+    const op = document.querySelector("#view-fractions .op-btn.active").dataset.fop;
+    const box = document.getElementById("fr-result");
+    if ([n1, d1, n2, d2].some(isNaN) || d1 === 0 || d2 === 0) { alert("Remplis correctement les deux fractions (dénominateur ≠ 0)."); return; }
+
+    let steps = "";
+    let rn, rd;
+    if (op === "+" || op === "-") {
+      const commun = lcm(d1, d2);
+      const n1b = n1 * (commun / d1);
+      const n2b = n2 * (commun / d2);
+      rn = op === "+" ? n1b + n2b : n1b - n2b;
+      rd = commun;
+      steps = `On met au même dénominateur (PPCM de ${d1} et ${d2} = ${commun}) :\n` +
+        `${n1}/${d1} = ${n1b}/${commun}   et   ${n2}/${d2} = ${n2b}/${commun}\n` +
+        `${n1b}/${commun} ${op === "+" ? "+" : "−"} ${n2b}/${commun} = ${rn}/${commun}`;
+    } else if (op === "*") {
+      rn = n1 * n2; rd = d1 * d2;
+      steps = `On multiplie les numérateurs entre eux et les dénominateurs entre eux :\n${n1} × ${n2} = ${rn}   /   ${d1} × ${d2} = ${rd}`;
+    } else {
+      rn = n1 * d2; rd = d1 * n2;
+      steps = `On multiplie par l'inverse de la deuxième fraction :\n${n1}/${d1} × ${d2}/${n2} = ${rn}/${rd}`;
+    }
+    const [sn, sd] = simplifyFrac(rn, rd);
+    box.style.display = "block";
+    document.getElementById("fr-value").textContent = rn + "/" + rd + (sd !== rd ? "  =  " + sn + "/" + sd : "");
+    document.getElementById("fr-steps").textContent = steps + (sd !== rd ? `\nOn simplifie par ${gcd(rn, rd)} : ${sn}/${sd}` : "\nCette fraction est déjà irréductible.");
+  });
+
+  document.getElementById("fs-run").addEventListener("click", () => {
+    const n = parseInt(document.getElementById("fs-n").value, 10);
+    const d = parseInt(document.getElementById("fs-d").value, 10);
+    const box = document.getElementById("fs-result");
+    if (isNaN(n) || isNaN(d) || d === 0) { alert("Remplis numérateur et dénominateur (dénominateur ≠ 0)."); return; }
+    const g = gcd(n, d);
+    const [sn, sd] = simplifyFrac(n, d);
+    box.style.display = "block";
+    document.getElementById("fs-value").textContent = sn + "/" + sd;
+    document.getElementById("fs-steps").textContent = g > 1
+      ? `Le plus grand diviseur commun de ${n} et ${d} est ${g}. On divise le numérateur et le dénominateur par ${g} : ${n}÷${g} = ${sn}, ${d}÷${g} = ${sd}.`
+      : "Cette fraction est déjà irréductible.";
+  });
+
+  /* ================= Grammaire ================= */
+  const gramCatsEl = document.getElementById("gram-cats");
+  const gramListEl = document.getElementById("gram-list");
+  const gramCats = [...new Set(GRAMMAIRE_DATA.map((g) => g.categorie))];
+  let currentGramCat = "Tous";
+
+  function renderGramCats() {
+    gramCatsEl.innerHTML = "";
+    ["Tous", ...gramCats].forEach((cat) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = cat;
+      b.className = cat === currentGramCat ? "active" : "";
+      b.addEventListener("click", () => { currentGramCat = cat; renderGramCats(); renderGramList(); });
+      gramCatsEl.appendChild(b);
+    });
+  }
+  function renderGramList() {
+    gramListEl.innerHTML = "";
+    GRAMMAIRE_DATA.filter((g) => currentGramCat === "Tous" || g.categorie === currentGramCat).forEach((g) => {
+      const card = document.createElement("div");
+      card.className = "grammar-card";
+      card.innerHTML = `<div class="g-cat">${g.categorie}</div><h3>${g.titre}</h3>${g.contenu}`;
+      gramListEl.appendChild(card);
+    });
+  }
+  renderGramCats();
+  renderGramList();
+
+  /* ================= Exercices ================= */
+  const EXO_KEY = "enock-exercices-custom-v1";
+  function loadCustomExos() {
+    try { return JSON.parse(localStorage.getItem(EXO_KEY) || "[]"); } catch (e) { return []; }
+  }
+  function saveCustomExos(list) {
+    try { localStorage.setItem(EXO_KEY, JSON.stringify(list)); } catch (e) {}
+  }
+  function allExercices() { return EXERCICES_BUILTIN.concat(loadCustomExos()); }
+
+  const exoCatsEl = document.getElementById("exo-cats");
+  const exoCats = [...new Set(EXERCICES_BUILTIN.map((e) => e.categorie))];
+  let currentExoCat = exoCats[0];
+  let currentQuestion = null;
+  let score = { correct: 0, total: 0 };
+
+  function renderExoCats() {
+    exoCatsEl.innerHTML = "";
+    exoCats.forEach((cat) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = cat;
+      b.className = cat === currentExoCat ? "active" : "";
+      b.addEventListener("click", () => { currentExoCat = cat; renderExoCats(); nextQuestion(); });
+      exoCatsEl.appendChild(b);
+    });
+  }
+
+  function nextQuestion() {
+    const pool = allExercices().filter((e) => e.categorie === currentExoCat);
+    if (pool.length === 0) return;
+    currentQuestion = pool[Math.floor(Math.random() * pool.length)];
+    document.getElementById("quiz-question").textContent = currentQuestion.question;
+    const optsEl = document.getElementById("quiz-options");
+    optsEl.innerHTML = "";
+    document.getElementById("quiz-explication").style.display = "none";
+    currentQuestion.options.forEach((opt, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "quiz-option";
+      b.textContent = opt;
+      b.addEventListener("click", () => answerQuestion(i, b));
+      optsEl.appendChild(b);
+    });
+  }
+
+  function answerQuestion(i, btnEl) {
+    const opts = document.querySelectorAll(".quiz-option");
+    if (opts[0].disabled) return;
+    opts.forEach((o) => (o.disabled = true));
+    const correct = currentQuestion.reponse;
+    opts[correct].classList.add("correct");
+    if (i !== correct) btnEl.classList.add("wrong");
+    score.total++;
+    if (i === correct) score.correct++;
+    document.getElementById("quiz-score").textContent = "Score : " + score.correct + " / " + score.total;
+    const expEl = document.getElementById("quiz-explication");
+    if (currentQuestion.explication) {
+      expEl.textContent = currentQuestion.explication;
+      expEl.style.display = "block";
+    }
+  }
+
+  document.getElementById("quiz-next").addEventListener("click", nextQuestion);
+  document.getElementById("ne-add").addEventListener("click", () => {
+    const cat = document.getElementById("ne-cat").value;
+    const question = document.getElementById("ne-question").value.trim();
+    const opt0 = document.getElementById("ne-opt0").value.trim();
+    const opt1 = document.getElementById("ne-opt1").value.trim();
+    const opt2 = document.getElementById("ne-opt2").value.trim();
+    const explication = document.getElementById("ne-explication").value.trim();
+    if (!question || !opt0 || !opt1) { alert("Remplis au moins la question, la bonne réponse et une mauvaise réponse."); return; }
+    const options = [opt0, opt1];
+    if (opt2) options.push(opt2);
+    // mélange les options, en gardant la trace de la bonne
+    const correctText = opt0;
+    for (let i = options.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [options[i], options[j]] = [options[j], options[i]];
+    }
+    const reponse = options.indexOf(correctText);
+    const list = loadCustomExos();
+    list.push({ categorie: cat, question, options, reponse, explication });
+    saveCustomExos(list);
+    document.getElementById("ne-question").value = "";
+    document.getElementById("ne-opt0").value = "";
+    document.getElementById("ne-opt1").value = "";
+    document.getElementById("ne-opt2").value = "";
+    document.getElementById("ne-explication").value = "";
+    alert("Exercice ajouté à la banque « " + cat + " ».");
+  });
+
+  renderExoCats();
+  nextQuestion();
+
+  /* ================= Lettre ================= */
+  const letterIntros = {
+    amicale: (dest) => "Cher(ère) " + (dest || "ami(e)") + ",",
+    formelle: (dest) => (dest || "Monsieur, Madame") + ",",
+    excuse: (dest) => (dest || "Monsieur, Madame") + ",",
+    demande: (dest) => (dest || "Monsieur, Madame") + ","
+  };
+  const letterClosings = {
+    amicale: "Je t'embrasse bien fort.",
+    formelle: "Je vous prie d'agréer, Monsieur, Madame, l'expression de mes salutations distinguées.",
+    excuse: "En vous remerciant de votre compréhension, je vous prie d'agréer mes salutations distinguées.",
+    demande: "Dans l'attente d'une réponse favorable, je vous prie d'agréer mes salutations distinguées."
+  };
+
+  function updateObjetVisibility() {
+    const type = document.getElementById("lt-type").value;
+    document.getElementById("lt-objet-field").style.display = (type === "formelle" || type === "demande") ? "block" : "none";
+  }
+  document.getElementById("lt-type").addEventListener("change", updateObjetVisibility);
+  updateObjetVisibility();
+
+  document.getElementById("lt-generer").addEventListener("click", () => {
+    const type = document.getElementById("lt-type").value;
+    const ville = document.getElementById("lt-ville").value.trim() || "________";
+    const dateVal = document.getElementById("lt-date").value;
+    const date = dateVal ? new Date(dateVal + "T00:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "________";
+    const exp = document.getElementById("lt-exp").value.trim();
+    const dest = document.getElementById("lt-dest").value.trim();
+    const objet = document.getElementById("lt-objet").value.trim();
+    const corps = document.getElementById("lt-corps").value.trim() || "(écris ici le contenu de ta lettre)";
+
+    let txt = ville + ", le " + date + "\n\n";
+    if ((type === "formelle" || type === "demande") && objet) txt += "Objet : " + objet + "\n\n";
+    txt += letterIntros[type](dest) + "\n\n";
+    txt += corps + "\n\n";
+    txt += letterClosings[type] + "\n\n";
+    txt += exp || "________";
+
+    document.getElementById("lt-sheet").textContent = txt;
+  });
+
+  document.getElementById("lt-print").addEventListener("click", () => window.print());
+
+  /* ================= Géographie ================= */
+  const geoListEl = document.getElementById("geo-list");
+  const geoReaderEl = document.getElementById("geo-reader");
+  let geoIndex = 0;
+
+  function renderGeoList() {
+    geoListEl.innerHTML = "";
+    GEO.forEach((ch, i) => {
+      const item = document.createElement("div");
+      item.className = "geo-item";
+      item.textContent = (i + 1) + ". " + ch.titre;
+      item.addEventListener("click", () => openGeo(i));
+      geoListEl.appendChild(item);
+    });
+  }
+  function openGeo(i) {
+    geoIndex = i;
+    const ch = GEO[i];
+    document.getElementById("geo-reader-title").textContent = (i + 1) + ". " + ch.titre;
+    document.getElementById("geo-reader-content").innerHTML = ch.contenu;
+    geoListEl.style.display = "none";
+    geoReaderEl.style.display = "block";
+  }
+  document.getElementById("geo-back").addEventListener("click", () => {
+    geoReaderEl.style.display = "none";
+    geoListEl.style.display = "block";
+  });
+  document.getElementById("geo-prev").addEventListener("click", () => openGeo((geoIndex - 1 + GEO.length) % GEO.length));
+  document.getElementById("geo-next").addEventListener("click", () => openGeo((geoIndex + 1) % GEO.length));
+  renderGeoList();
+
+  /* ================= Sciences naturelles ================= */
+  const sciListEl = document.getElementById("sciences-list");
+  const sciReaderEl = document.getElementById("sciences-reader");
+  let sciIndex = 0;
+
+  function renderSciList() {
+    sciListEl.innerHTML = "";
+    SCIENCES.forEach((ch, i) => {
+      const item = document.createElement("div");
+      item.className = "geo-item";
+      item.textContent = (i + 1) + ". " + ch.titre;
+      item.addEventListener("click", () => openSci(i));
+      sciListEl.appendChild(item);
+    });
+  }
+  function openSci(i) {
+    sciIndex = i;
+    const ch = SCIENCES[i];
+    document.getElementById("sciences-reader-title").textContent = (i + 1) + ". " + ch.titre;
+    document.getElementById("sciences-reader-content").innerHTML = ch.contenu;
+    sciListEl.style.display = "none";
+    sciReaderEl.style.display = "block";
+  }
+  document.getElementById("sciences-back").addEventListener("click", () => {
+    sciReaderEl.style.display = "none";
+    sciListEl.style.display = "block";
+  });
+  document.getElementById("sciences-prev").addEventListener("click", () => openSci((sciIndex - 1 + SCIENCES.length) % SCIENCES.length));
+  document.getElementById("sciences-next").addEventListener("click", () => openSci((sciIndex + 1) % SCIENCES.length));
+  renderSciList();
+
+  /* ================= Dictées audio ================= */
+  const dicteeListEl = document.getElementById("dictee-list");
+  const dicteePlayerEl = document.getElementById("dictee-player");
+  let currentDictee = null;
+  let currentUtterance = null;
+  const ttsSupported = "speechSynthesis" in window;
+
+  function renderDicteeList() {
+    dicteeListEl.innerHTML = "";
+    if (!ttsSupported) {
+      const warn = document.createElement("div");
+      warn.className = "note-box";
+      warn.textContent = "La synthèse vocale n'est pas disponible sur ce navigateur/appareil : les dictées ne peuvent pas être lues à voix haute ici.";
+      dicteeListEl.appendChild(warn);
+    }
+    DICTEES.forEach((d) => {
+      const item = document.createElement("div");
+      item.className = "dictee-item";
+      item.innerHTML = `<span>${d.titre}</span><span class="d-niveau">${d.niveau}</span>`;
+      item.addEventListener("click", () => openDictee(d));
+      dicteeListEl.appendChild(item);
+    });
+  }
+
+  function openDictee(d) {
+    currentDictee = d;
+    document.getElementById("dictee-title").textContent = d.titre + " (" + d.niveau + ")";
+    document.getElementById("dictee-input").value = "";
+    document.getElementById("dictee-result").style.display = "none";
+    dicteeListEl.style.display = "none";
+    dicteePlayerEl.style.display = "block";
+    window.speechSynthesis && window.speechSynthesis.cancel();
+  }
+
+  document.getElementById("dictee-back").addEventListener("click", () => {
+    window.speechSynthesis && window.speechSynthesis.cancel();
+    dicteePlayerEl.style.display = "none";
+    dicteeListEl.style.display = "block";
+  });
+
+  document.getElementById("dictee-play").addEventListener("click", () => {
+    if (!ttsSupported || !currentDictee) { alert("La lecture audio n'est pas disponible sur cet appareil."); return; }
+    window.speechSynthesis.cancel();
+    const rate = parseFloat(document.getElementById("dictee-rate").value);
+    const utt = new SpeechSynthesisUtterance(document.getElementById("dictee-ponctuation").checked ? toSpokenText(currentDictee.texte) : currentDictee.texte);
+    utt.lang = "fr-FR";
+    utt.rate = rate;
+    const voices = window.speechSynthesis.getVoices();
+    const frVoice = voices.find((v) => v.lang && v.lang.toLowerCase().startsWith("fr"));
+    if (frVoice) utt.voice = frVoice;
+    currentUtterance = utt;
+    window.speechSynthesis.speak(utt);
+  });
+  document.getElementById("dictee-pause").addEventListener("click", () => {
+    if (!ttsSupported) return;
+    if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+      window.speechSynthesis.pause();
+    } else if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
+  });
+  document.getElementById("dictee-stop").addEventListener("click", () => {
+    if (ttsSupported) window.speechSynthesis.cancel();
+  });
+
+  function normalizeDicteeWord(w) {
+    return w
+      .normalize("NFC")
+      .replace(/[\u2019\u2018]/g, "'")
+      .replace(/[\u201C\u201D]/g, '"')
+      .replace(/^[.,;:!?"'«»()\u2026\-–—]+|[.,;:!?"'«»()\u2026\-–—]+$/g, "")
+      .toLowerCase();
+  }
+
+  function toSpokenText(text) {
+    let t = text;
+    t = t.replace(/\.\.\.|\u2026/g, " points de suspension ");
+    t = t.replace(/\?/g, " point d'interrogation ");
+    t = t.replace(/!/g, " point d'exclamation ");
+    t = t.replace(/;/g, " point-virgule ");
+    t = t.replace(/:/g, " deux points ");
+    t = t.replace(/,/g, " virgule ");
+    t = t.replace(/«/g, " ouvrez les guillemets ");
+    t = t.replace(/»/g, " fermez les guillemets ");
+    t = t.replace(/\./g, " point ");
+    return t.replace(/\s+/g, " ").trim();
+  }
+
+  document.getElementById("dictee-check").addEventListener("click", () => {
+    if (!currentDictee) return;
+    const original = currentDictee.texte.split(/\s+/).filter(Boolean);
+    const userWords = document.getElementById("dictee-input").value.split(/\s+/).filter(Boolean);
+    let correctCount = 0;
+    const diffEl = document.getElementById("dictee-diff");
+    diffEl.innerHTML = "";
+    original.forEach((word, i) => {
+      const userWord = userWords[i] || "";
+      const ok = normalizeDicteeWord(userWord) === normalizeDicteeWord(word);
+      if (ok) correctCount++;
+      const span = document.createElement("span");
+      span.className = "diff-word " + (ok ? "ok" : "bad");
+      span.textContent = userWord || "…";
+      if (!ok) {
+        const corr = document.createElement("span");
+        corr.className = "correction";
+        corr.textContent = "(" + word + ")";
+        span.appendChild(corr);
+      }
+      diffEl.appendChild(span);
+      diffEl.appendChild(document.createTextNode(" "));
+    });
+    const pct = Math.round((correctCount / original.length) * 100);
+    document.getElementById("dictee-score-value").textContent = "Score : " + correctCount + " / " + original.length + " mots corrects (" + pct + "%)";
+    document.getElementById("dictee-result").style.display = "block";
+  });
+
+  renderDicteeList();
+
+  /* ================= Service worker ================= */
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    });
+  }
+})();
+</script>
 </body>
 </html>
