@@ -44,9 +44,14 @@ sans problème depuis un téléphone.
   fiches de lecture.
 - **Sciences** : le corps humain, les plantes, les états de la
   matière, les animaux, hygiène et santé.
-- **Dictées** : 8 textes à écouter (synthèse vocale du téléphone,
-  vitesse réglable) puis à écrire ; l'app corrige mot à mot et donne
-  un score.
+- **Civisme** : symboles nationaux, droits de l'enfant, devoirs du
+  citoyen, famille et respect, vie en communauté, valeurs morales.
+- **Conversions** : longueur, masse et capacité (système métrique),
+  avec la démarche de calcul.
+- **Dictées** : 15 textes à écouter phrase par phrase (avec pauses,
+  vitesse réglable, ponctuation dictée à voix haute), un bouton pour
+  épeler n'importe quel mot à la demande, correction mot à mot, et un
+  historique des scores conservé par dictée.
 
 ## Limites à connaître
 
